@@ -1,7 +1,7 @@
 ---
-title: "Project Two | Code Stitch Web Designs"
-description: "Meta description for the page"
-permalink: "/project-two/"
+title: "Dealer Portal VE/US"
+description: "Order our lithium batteries through the dealer portal."
+permalink: "/Dealer-Portal/"
 ---
 
 {% extends "layouts/base.html" %}
@@ -12,110 +12,232 @@ permalink: "/project-two/"
 
 {% block body %}
 
-    <!-- ============================================ -->
-    <!--                   Banner                     -->
-    <!-- ============================================ -->
 
-    <div id="banner-310">
-        <div class="cs-container">
-            <span class="cs-int-title">Project Two Gallery</span>
-            <div class="cs-breadcrumbs">
-                <a href="/" class="cs-link">Home</a>
-                <a href="/project-two/" class="cs-link cs-active">Project Two Gallery</a>
-            </div>
+<!-- ============================================ -->
+<!--                 Side By Side                 -->
+<!-- ============================================ -->
+
+<section id="sbs-1308">
+    <div class="cs-container">
+        <!-- Left Image Section -->
+        <div class="cs-image-group">
+            <!--Image-->
+            
+            <picture class="cs-picture cs-picture2">
+                <source 
+                    srcset="{% getUrl '/assets/images/12v320ahFront.png' | resize({ width: 1200 }) | webp %}" 
+                    media="(min-width: 601px)" 
+                    type="image/webp">
+                <source 
+                    srcset="{% getUrl '/assets/images/12v320ahFront.png' | resize({ width: 800 }) | webp %}" 
+                    media="(max-width: 600px)" 
+                    type="image/webp">
+                <img 
+                    loading="lazy" 
+                    decoding="async" 
+                    src="{% getUrl '/assets/images/12v320ahFront.png' | resize({ width: 1200 }) %}" 
+                    alt="12V 320Ah Battery" 
+                    width="630" 
+                    height="630" 
+                    style="object-fit: contain; width: 100%; height: auto;">
+            </picture>
         </div>
-        <!--Background Image-->
-
-        <picture class="cs-background">
-            <!--Mobile Image-->
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 640, height: 600 }) | avif %}" type="image/avif">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 640, height: 600 }) | webp %}" type="image/webp">
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 640, height: 600 }) | jpeg %}" type="image/jpeg">
-            <!--Tablet Image-->
-            <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2048, height: 942 }) | avif %}" type="image/avif">
-            <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2048, height: 942 }) | webp %}" type="image/webp">
-            <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2048, height: 942 }) | jpeg %}" type="image/jpeg">
-            <!--Desktop Image-->
-            <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | avif %}" type="image/avif">
-            <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | webp %}" type="image/webp">
-            <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | jpeg %}" type="image/jpeg">
-            <img src="{% getUrl "/assets/images/cabinets.jpg" | resize({ width: 2500, height: 628 }) | jpeg %}" alt="library" width="1920" height="482" loading="eager" decoding="async">
-        </picture>
+        <!-- Right Content Section-->
+        <div class="cs-content">
+            <br><br><br><br><br>
+            <span class="cs-topper">NEW</span>
+            <h2 class="cs-title">Marine and RV Batteries</h2>
+            <p class="cs-text">
+                We are excited to announce the launch of our new line of RV and marine lithium batteries, engineered to deliver superior performance, longer lifespan, and enhanced safety compared to traditional lead-acid batteries. Lightweight and built for deep-cycle use, these batteries include an integrated BMS to protect against overcharge, over-discharge, and extreme temperatures.
+                <br><br>
+                Whether you're powering appliances and electronics in an RV or running trolling motors and onboard systems on the water, our batteries provide reliable, consistent power for recreational and commercial use.
+                <br><br>
+                <a class="cs-button-solid" aria-label="learn more about our programs" href="/Dealer-Portal#cs-contact-549">Order Now</a>
+            <ul class="cs-ul">
+                <li class="cs-item">
+                    <span class="cs-number">12v</span>
+                    <h3 class="cs-h3">Power your boat's electronics and onboard systems</h3>
+                </li>
+                <li class="cs-item">
+                    <span class="cs-number">320Ah</span>
+                    <h3 class="cs-h3">Long lasting battery, delivers reliable power and deep-cycle performance.</h3>
+                </li>
+                <li class="cs-item">
+                    <span class="cs-number">$495</span>
+                    <h3 class="cs-h3">Includes 5 year battery warranty and charger</h3>
+                </li>
+            </ul>
+        </div>
     </div>
+</section>
+                              
+<section id="sbs-1308">
+    <div class="cs-container">
+        <!-- Left Content Section-->
+        <div class="cs-content">
+            <span class="cs-topper"></span>
+            <h2 class="cs-title"> 48v Golf Cart Batteries</h2>
+            <p class="cs-text">
+                Our high-performance 48v lithium golf cart batteries deliver longer run times and faster charging. Designed for deep-cycle use, they provide consistent power for motors and accessories while the integrated BMS protects against overcharge, over-discharge, and extreme temperatures. Low maintenance and built for many charge cycles, these 48v batteries are ideal for recreational carts, utility vehicles, and fleet applications.
+                <br><br>
+                <a class="cs-button-solid" aria-label="learn more about our programs" href="/Dealer-Portal#cs-contact-549">Order Now</a>
+            <ul class="cs-ul">
+                <li class="cs-item">
+                    <span class="cs-number">48v</span>
+                    <h3 class="cs-h3">Power 48v golf carts</h3>
+                </li>
+                <li class="cs-item">
+                    <span class="cs-number">100Ah</span>
+                    <h3 class="cs-h3">Long lasting battery, keeping your golf cart powered for longer</h3>
+                </li><li class="cs-item">
+                    <span class="cs-number">$900</span>
+                    <h3 class="cs-h3">Includes a 5 year warranty and 2 year charger warranty</h3>
+                </li>
 
-    <!-- ============================================ -->
-    <!--                   Gallery                    -->
-    <!-- ============================================ -->
-
-    <section id="gallery-48">
-        <div class="cs-container">
-            <div class="cs-content">
-                <span class="cs-topper">Our Portfolio</span>
-                <h2 class="cs-title">Et orci volutpat, back up generator installations</h2>
-            </div>
-            <div class="cs-image-group">
-                <div class="cs-row cs-row-1">
-                    <!-- Row 1-->
-                    <picture class="cs-picture cs-picture-1">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port1.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port1.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port1.jpg" alt="new hallway" width="420" height="567">
-                    </picture>
-                    <picture class="cs-picture cs-picture-2">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port4.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port4.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port4.jpg" alt="new home construction" width="420" height="630">
-                    </picture>
-                    <picture class="cs-picture cs-picture-3">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port7.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port7.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port7.jpg" alt="building a new wall" width="420" height="512">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-                <!-- Row 2 -->
-                <div class="cs-row cs-row-2">
-                    <picture class="cs-picture cs-picture-1">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port2.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port2.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port2.jpg" alt="new kitchen" width="420" height="492">
-                    </picture>
-                    <picture class="cs-picture cs-picture-2">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port5.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port5.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port5.jpg" alt="apartment addition" width="420" height="517">
-                    </picture>
-                    <picture class="cs-picture cs-picture-3">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port8.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port8.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port8.jpg" alt="kew kitchen cabinets" width="420" height="629">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-                <!-- Row 3 -->
-                <div class="cs-row cs-row-3">
-                    <picture class="cs-picture cs-picture-1">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port3.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port3.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port3.jpg" alt="new black window structure" width="420" height="625">
-                    </picture>
-                    <picture class="cs-picture cs-picture-2">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port6.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port6.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port6.jpg" alt="kitchen rebovation" width="420" height="452">
-                    </picture>
-                    <picture class="cs-picture cs-picture-3">
-                        <source media="(max-width: 600px)" srcset="/assets/images/portfolio/port9.jpg">
-                        <source media="(min-width: 601px)" srcset="/assets/images/portfolio/port9.jpg">
-                        <img loading="lazy" decoding="async" src="/assets/images/portfolio/port9.jpg" alt="bathroom renovation" width="420" height="629">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-            </div>
-            <a href="/contact/" class="cs-button-solid">Get Started</a>
+            </ul>
         </div>
-    </section>
+        <!-- Right Image Section -->
+        <div class="cs-image-group" style="height:600px;">
+            <!--Image-->
+            <picture class="cs-picture cs-picture2" style="height:100%; display:block;">
+                <source
+                    srcset="{% getUrl '/assets/images/48v100ah.png' | resize({ width: 1200 }) | webp %}"
+                    media="(min-width: 601px)"
+                    type="image/webp">
+                <source
+                    srcset="{% getUrl '/assets/images/48v100ah.png' | resize({ width: 800 }) | webp %}"
+                    media="(min-width: 601px)"
+                    type="image/webp">
+                <source
+                    srcset="{% getUrl '/assets/images/48v100ah.png' | resize({ width: 480 }) | webp %}"
+                    media="(max-width: 600px)"
+                    type="image/webp">
+                <img
+                    loading="lazy"
+                    decoding="async"
+                    src="{% getUrl '/assets/images/48v100ah.png' | resize({ width: 800 }) | webp %}"
+                    alt="48v 100ah Golf Cart Battery"
+                    width="1200"
+                    height="1200"
+                    style="width:100%; height:100%; object-fit:contain; object-position:center;">
+            </picture>
+        </div>
+    </div>
+</section>
+               
+<!-- ============================================ -->
+<!--                 Side By Side                 -->
+<!-- ============================================ -->
 
-    {% include 'sections/cta.html' %}
+<section id="sbs-1308">
+    <div class="cs-container">
+        <!-- Left Image Section -->
+        <div class="cs-image-group">
+            <!--Image-->
+            <picture class="cs-picture cs-picture2" style="height:100%; display:block;">
+                <source
+                    srcset="{% getUrl '/assets/images/36v100ah.png' | resize({ width: 1200 }) | webp %}"
+                    media="(min-width: 601px)"
+                    type="image/webp">
+                <source
+                    srcset="{% getUrl '/assets/images/36v100ah.png' | resize({ width: 800 }) | webp %}"
+                    media="(min-width: 601px)"
+                    type="image/webp">
+                <source
+                    srcset="{% getUrl '/assets/images/36v100ah.png' | resize({ width: 480 }) | webp %}"
+                    media="(max-width: 600px)"
+                    type="image/webp">
+                <img
+                    loading="lazy"
+                    decoding="async"
+                    src="{% getUrl '/assets/images/36v100ah.png' | resize({ width: 800 }) | webp %}"
+                    alt="36v 100ah Golf Cart Battery"
+                    width="1200"
+                    height="1200"
+                    style="width:100%; height:100%; object-fit:contain; object-position:center;">
+            </picture>
+        </div>
+        <!-- Right Content Section-->
+        <div class="cs-content">
+            <span class="cs-topper"></span>
+            <h2 class="cs-title">36v Golf Cart Batteries</h2>
+            <p class="cs-text">
+                Our 36V golf cart batteries are engineered to deliver reliable, long-lasting power for golf carts and light utility vehicles. Designed as deep-cycle lithium batteries, they provide extended run times, faster charging, and reduced weight compared with lead-acid alternatives. An integrated BMS protects against overcharge, over-discharge, short circuits, and extreme temperatures to maximize safety and lifespan. Low-maintenance and built for many charge cycles, these 36V units are ideal for recreational carts and course fleets applications.
+                <br><br>
+                <a class="cs-button-solid" aria-label="learn more about our programs" href="/Dealer-Portal#cs-contact-549">Order Now</a>
+            <ul class="cs-ul">
+                <li class="cs-item">
+                    <span class="cs-number">36v</span>
+                    <h3 class="cs-h3">Power 36v golf carts</h3>
+                </li>
+                <li class="cs-item">
+                    <span class="cs-number">100Ah</span>
+                    <h3 class="cs-h3">Long lasting battery, delivers reliable power and deep-cycle performance.</h3>
+                </li>
+                <li class="cs-item">
+                    <span class="cs-number">$750</span>
+                    <h3 class="cs-h3">With 5 year warranty and 2 year charger warranty</h3>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ============================================ -->
+<!--                 Contact Form                 -->
+<!-- ============================================ -->
+
+<section id="cs-contact-549">
+    <div class="cs-container">
+        <div class="cs-content">
+            <span class="cs-topper">Order</span>
+            <h2 class="cs-title">Order Our Batteries</h2>
+            <p class="cs-text">
+                Fill out the form below to place an order for our high-quality lithium batteries. Our team will review your order and get back to you as soon as possible.
+            </p>
+        </div>
+        <!--Form-->
+        <form class="cs-form" id="Order" name="Order Form" method="post" netlify>
+            <label class="cs-label">
+                Name
+                <input class="cs-input" required type="text" id="name-order" name="name" placeholder="Name">
+                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/person-gold.svg" alt="person icon" width="32" height="32">
+            </label>
+            <label class="cs-label cs-email">
+                Email
+                <input class="cs-input" required type="text" id="email-order" name="email" placeholder="Email">
+                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/mail-gold.svg" alt="mail icon" width="32" height="32">
+            </label>
+            <label class="cs-label cs-phone">
+                Phone
+                <input class="cs-input" required type="text" id="phone-order" name="phone" placeholder="Phone">
+                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/phone-golden.svg" alt="phone icon" width="32" height="32">
+            </label>
+            <label class="cs-label cs-phone">
+                Address
+                <input class="cs-input" required type="text" id="address-order" name="address" placeholder="Address">
+            </label>
+            <label class="cs-label cs-phone">
+                Product
+                 <select class="cs-label cs-select-label" required name="product" id="product-order">
+                    <option value="" disabled selected>Select Product</option>
+                    <option value="Golf Cart 48v 100ah">Golf Cart Battery 48v 100ah - $900</option>
+                    <option value="Golf Cart 36v 100ah">Golf Cart Battery 36v 100ah - $750</option>
+                    <option value="RV and BoatBattery 12v 320ah">RV and Boat Battery 12v 320ah - $495</option>
+                </select> 
+            </label>
+            <label>
+                Quantity
+                <input class="cs-input" required type="number" id="quantity-order" name="quantity" placeholder="Quantity">
+            </label>
+            <label class="cs-label cs-textarea-label">
+                Message
+                <textarea class="cs-textarea" name="Message" id="message-order" placeholder="Write message..."></textarea>
+            </label>
+            <button class="cs-submit" type="submit">Send</button>
+        </form>
+    </div>
+</section>
+                                
 
 {% endblock %}
