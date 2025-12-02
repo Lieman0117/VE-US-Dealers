@@ -1,0 +1,191 @@
+// ─────────────────────────────────────────────────────────────────────────────
+// PAGE STYLES
+// Interior pages have their own stylesheet for styles that only exist on
+// that page. Any styles shared between pages, including repeated sections,
+// should go into root.less
+// ─────────────────────────
+
+/*-- -------------------------- -->
+<---        Side By Side        -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #sbs-83 {
+        padding: var(--sectionPadding);
+
+        .cs-container {
+            width: 100%;
+            /* changes to 1280px at tablet */
+            max-width: (550/16rem);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* 48px - 64px */
+            gap: clamp(3rem, 6vw, 4rem);
+        }
+
+        .cs-content {
+            /* set text align to left if content needs to be left aligned */
+            text-align: left;
+            width: 100%;
+            max-width: (522/16rem);
+            display: flex;
+            flex-direction: column;
+            /* centers content horizontally, set to flex-start to left align */
+            align-items: flex-start;
+        }
+
+        .cs-title {
+            max-width: 20ch;
+        }
+
+        .cs-text {
+            margin-bottom: (16/16rem);
+            &:last-of-type {
+                margin-bottom: (32/16rem);
+            }
+        }
+
+        .cs-card-group {
+            width: 100%;
+            max-width: (400/16rem);
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            column-gap: (12/16rem);
+        }
+
+        .cs-item {
+            list-style: none;
+            width: 40%;
+            max-width: (400/16rem);
+            /* making flex so we can align a heading with 1 line to the bottom */
+            display: flex;
+            flex-direction: column;
+            align-self: stretch;
+            align-content: space-between;
+        }
+
+        .cs-number {
+            /* 39px - 49px */
+            font-size: clamp(2.4375rem, 5vw, 3.0625rem);
+            line-height: 1.2em;
+            font-weight: 700;
+            text-align: left;
+            color: var(--primary);
+            display: block;
+            /* 8px - 16px */
+            margin: 0 0 clamp(0.25rem, 0.5vw, 1rem);
+        }
+
+        .cs-h3 {
+            /* 16px - 20px */
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            line-height: 1.2em;
+            text-align: left;
+            /* auto margin top will push text to bottom if there's only one line */
+            margin: auto 0 0;
+            color: var(--headerColor);
+        }
+
+        .cs-image-group {
+            width: 100%;
+            max-width: (542/16rem);
+            /* pushes down by the same amount the images overlap the image group */
+            margin: 0 0 (40/16rem);
+            display: flex;
+            /* separate children to opposite sides of the room */
+            justify-content: center;
+            align-content: space-between;
+            flex-wrap: wrap;
+            gap: clamp(0.5rem, 2vw, 1.25rem);
+        }
+
+        .cs-picture {
+            width: 100%;
+            /* 218px - 264px */
+            min-height: clamp(13.625rem, 25vw, 16.5rem);
+            aspect-ratio: 160/218;
+            position: relative;
+            display: block;
+
+            &:nth-of-type(2) {
+                /* move slightly down */
+                transform: translateY(2.5rem);
+            }
+
+            &:nth-of-type(4) {
+                /* move slightly up */
+                transform: translateY(2.5rem);
+            }
+
+            img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                /* Makes image act as a background image to the picture element */
+                object-fit: cover;
+            }
+        }
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #sbs-83 {
+        .cs-container {
+            max-width: (1280/16rem);
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            /* 44px - 108px */
+            column-gap: clamp(2.75rem, calc(4.5vw * 1.2 + 1em), 6.75rem);
+        }
+
+        .cs-card-group {
+            max-width: 100%;
+        }
+
+        .cs-image-group {
+            /* 318px - 542px */
+            width: clamp(19.875rem, 46.9vw, 33.875rem);
+            /* prevents flexbox from squishing it */
+            flex: none;
+        }
+
+        .cs-picture {
+            width: 100%;
+            aspect-ratio: initial;
+        }
+    }
+}
+
+/* Dark Mode */
+@media only screen and (min-width: 0rem) {
+    body.dark-mode {
+        #sbs-83 {
+            .cs-title,
+            .cs-text,
+            .cs-h3 {
+                color: var(--bodyTextColorWhite);
+            }
+
+            .cs-text {
+                opacity: 0.8;
+            }
+
+            .cs-h3 {
+                color: var(--bodyTextColorWhite);
+            }
+        }
+    }
+}
+
+                                
+
