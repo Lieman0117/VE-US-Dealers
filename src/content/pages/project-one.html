@@ -13,7 +13,7 @@ permalink: "/Dealer-Access-Request/"
 {% block body %}
 
 <!-- ============================================ -->
-<!--                 Contact Form                 -->
+<!--        Dealer Agreement + Signup Form        -->
 <!-- ============================================ -->
 
 <section id="cs-contact-549">
@@ -23,39 +23,95 @@ permalink: "/Dealer-Access-Request/"
             <span class="cs-topper">Apply For Dealer</span>
             <h2 class="cs-title">Become a partner with Vehicle Electronics US</h2>
             <p class="cs-text">
-                Fill out the form below to apply to become a dealer with Vehicle Electronics US. Our team will review your application and get back to you as soon as possible.
+                Before accessing dealer pricing and order forms, please review and accept our Dealer Agreement, then complete the application form.
             </p>
         </div>
-        <!--Form-->
-        <form class="cs-form" id="apply" name="Apply for Dealer" method="post" netlify>
+
+        <!-- =============================== -->
+        <!--        Dealer Agreement         -->
+        <!-- =============================== -->
+        <div class="cs-content" style="margin-bottom: 30px;">
+            <h3 class="cs-title" style="font-size: 1.4rem;">Dealer Agreement</h3>
+            <p class="cs-text">
+                This is a placeholder for the official Dealer Agreement text.
+            </p>
+
+            <label class="cs-label" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                <input type="checkbox" id="agreementCheckbox" style="width:18px; height:18px;">
+                <span>I have read and accept the Dealer Agreement.</span>
+            </label>
+        </div>
+
+        <!-- =============================== -->
+        <!--        Dealer Signup Form        -->
+        <!-- =============================== -->
+        <form class="cs-form" id="dealerSignup" name="Apply for Dealer" method="post" netlify
+            style="max-height:0; overflow:hidden; opacity:0.4; pointer-events:none; transition:all .4s ease;">
+
+
             <label class="cs-label">
-                Name
-                <input class="cs-input" required type="text" id="name-apply" name="name" placeholder="Name">
-                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/person-gold.svg" alt="person icon" width="32" height="32">
+                Business Name
+                <input class="cs-input" required type="text" id="Bname-apply" name="business-name" placeholder="Business Name">
+                <img class="cs-icon" loading="lazy" decoding="async"
+                     src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/person-gold.svg" width="32" height="32">
             </label>
-            <label class="cs-label cs-email">
-                Email
-                <input class="cs-input" required type="text" id="email-apply" name="email" placeholder="Email">
-                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/mail-gold.svg" alt="mail icon" width="32" height="32">
-            </label>
-            <label class="cs-label cs-phone">
-                Phone
-                <input class="cs-input" required type="text" id="phone-apply" name="phone" placeholder="Phone">
-                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/phone-golden.svg" alt="phone icon" width="32" height="32">
-            </label>
+
             <label class="cs-label cs-phone">
                 Business License Number
                 <input class="cs-input" required type="text" id="license-apply" name="license" placeholder="Business License Number">
-                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/refer.svg" alt="talking icon" width="32" height="32">
+                <img class="cs-icon" loading="lazy" decoding="async"
+                     src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/refer.svg" width="32" height="32">
             </label>
+
             <label class="cs-label cs-phone">
-                Address
+                Business Address
                 <input class="cs-input" required type="text" id="address-apply" name="address" placeholder="Address">
             </label>
+
+            <label class="cs-label cs-email">
+                Email
+                <input class="cs-input" required type="email" id="email-apply" name="email" placeholder="Email">
+                <img class="cs-icon" loading="lazy" decoding="async"
+                     src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/mail-gold.svg" width="32" height="32">
+            </label>
+
+            <label class="cs-label cs-phone">
+                Phone
+                <input class="cs-input" required type="text" id="phone-apply" name="phone" placeholder="Phone">
+                <img class="cs-icon" loading="lazy" decoding="async"
+                     src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/phone-golden.svg" width="32" height="32">
+            </label>
+
+            <label class="cs-label">
+                Contact Person Name
+                <input class="cs-input" required type="text" id="contact-apply" name="contact-name" placeholder="Name">
+                <img class="cs-icon" loading="lazy" decoding="async"
+                     src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/person-gold.svg" width="32" height="32">
+            </label>
+
             <button class="cs-submit" type="submit">Send</button>
         </form>
     </div>
 </section>
-                                
+
+<!-- ============================================ -->
+<!--                   Script                     -->
+<!-- ============================================ -->
+<script>
+document.getElementById("agreementCheckbox").addEventListener("change", function () {
+    const form = document.getElementById("dealerSignup");
+
+    if (this.checked) {
+        form.style.maxHeight = "3000px";        // expands smoothly
+        form.style.opacity = "1";
+        form.style.pointerEvents = "auto";
+    } else {
+        form.style.maxHeight = "0";             // collapses smoothly
+        form.style.opacity = "0.4";
+        form.style.pointerEvents = "none";
+    }
+});
+</script>
+
 
 {% endblock %}
