@@ -1,29 +1,32 @@
 // netlify/edge-functions/auth-guard.js
 export default async (request, context) => {
-  // 1. Pull settings from Netlify Environment Variables
+  const url = new URL(request.url);
   const domain = Netlify.env.get("AUTH0_DOMAIN");
   const clientId = Netlify.env.get("AUTH0_CLIENT_ID");
 
-  if (!domain || !clientId) {
-    console.error("Missing Auth0 Environment Variables");
-    return new Response("Server Configuration Error", { status: 500 });
+  // 1. HANDLE CALLBACK: If user just logged in and is arriving at homepage
+  if (url.searchParams.has("code") && url.pathname === "/") {
+    const response = Response.redirect(new URL("/dealer-portal", request.url), 302);
+    // Set a simple session cookie to remember they are logged in
+    response.headers.append("Set-Cookie", "appSession=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600");
+    return response;
   }
 
-  // 2. Check for the Auth0 session cookie
-  const hasSession = request.headers.get("cookie")?.includes("appSession");
+  // 2. PROTECT PORTAL: Check if visiting the dealer portal
+  if (url.pathname.startsWith("/dealer-portal")) {
+    const hasSession = request.headers.get("cookie")?.includes("appSession=true");
 
-  if (!hasSession) {
-    // 3. Build Login URL using the secure variables
-    const redirectUri = "https://veusdealers.netlify.app/"; 
-    const auth0LoginUrl = `https://${domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email`;
-
-    return Response.redirect(auth0LoginUrl, 302);
+    if (!hasSession) {
+      const redirectUri = "veusdealers.netlify.app"; 
+      const auth0LoginUrl = `https://${domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email`;
+      return Response.redirect(auth0LoginUrl, 302);
+    }
   }
 
-  // Session exists, proceed to page
+  // Allow all other requests (like the homepage itself)
   return;
 };
 
 export const config = {
-  path: "/dealer-portal",
+  path: "/*", // Run on all paths so it can catch the callback on the homepage
 };
