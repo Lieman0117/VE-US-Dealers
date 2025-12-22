@@ -1,5 +1,5 @@
 // netlify/edge-functions/auth-guard.js
-import { auth0 } from "edge.netlify.com"; 
+import { authGuard } from "https://edge.netlify.com/auth/auth0";
 
 export default async (request, context) => {
   try {
