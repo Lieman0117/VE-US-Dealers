@@ -14,7 +14,7 @@ export default async (request, context) => {
 
   if (!hasSession) {
     // 3. Build Login URL using the secure variables
-    const redirectUri = "veusdealers.netlify.app"; 
+    const redirectUri = "https://veusdealers.netlify.app/"; 
     const auth0LoginUrl = `https://${domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email`;
 
     return Response.redirect(auth0LoginUrl, 302);
