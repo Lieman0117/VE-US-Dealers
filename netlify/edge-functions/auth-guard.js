@@ -1,23 +1,25 @@
 // netlify/edge-functions/auth-guard.js
+import { auth0 } from "edge.netlify.com"; 
+
 export default async (request, context) => {
   try {
-    // Check if the Auth0 extension is active on this request
-    const user = await context.auth0?.getUser();
+    // 1. Check if user is logged in
+    const user = await auth0.getUser(request, context);
 
-    // If no user is logged in, redirect to the Auth0 login screen
     if (!user) {
-      return context.auth0.loginRedirect();
+      // 2. If not logged in, redirect to the Auth0 login page
+      return auth0.loginRedirect(request, context);
     }
 
-    // User is logged in, continue to the Eleventy page
-    return; 
+    // 3. User is authenticated, proceed to /dealer-portal
+    return;
   } catch (error) {
-    console.error("Auth0 Edge Function Error:", error);
-    // Fallback: if there's a system error, redirect to home to prevent the "Crashed" screen
-    return new Response(null, { status: 302, headers: { Location: "/" } });
+    console.error("Auth0 Extension Error:", error);
+    // Prevents the "Crashed" screen; redirects to home instead
+    return Response.redirect(new URL("/", request.url), 302);
   }
 };
 
 export const config = {
-  path: "/your-protected-page", // Replace with your actual Eleventy page path
+  path: "/dealer-portal",
 };
