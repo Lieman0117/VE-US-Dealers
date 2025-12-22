@@ -1,21 +1,26 @@
 // netlify/edge-functions/auth-guard.js
 export default async (request, context) => {
-  // 1. Check for the Auth0 session cookie (usually named 'appSession')
+  // 1. Pull settings from Netlify Environment Variables
+  const domain = Netlify.env.get("AUTH0_DOMAIN");
+  const clientId = Netlify.env.get("AUTH0_CLIENT_ID");
+
+  if (!domain || !clientId) {
+    console.error("Missing Auth0 Environment Variables");
+    return new Response("Server Configuration Error", { status: 500 });
+  }
+
+  // 2. Check for the Auth0 session cookie
   const hasSession = request.headers.get("cookie")?.includes("appSession");
 
   if (!hasSession) {
-    // 2. Build your Auth0 Login URL manually
-    const domain = "dev-c48iqffskp7vzvms.auth0.com";
-    const clientId = "LUmC8kUGIpxYkQSWN2keGeKYcu0do9dJ";
-    const redirectUri = "veusdealers.netlify.app"; // Your site URL
-    
+    // 3. Build Login URL using the secure variables
+    const redirectUri = "veusdealers.netlify.app"; 
     const auth0LoginUrl = `https://${domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email`;
 
-    // 3. Force redirect to Auth0 login
     return Response.redirect(auth0LoginUrl, 302);
   }
 
-  // If session exists, let them through
+  // Session exists, proceed to page
   return;
 };
 
