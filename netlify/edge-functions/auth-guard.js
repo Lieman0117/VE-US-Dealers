@@ -1,27 +1,22 @@
 // netlify/edge-functions/auth-guard.js
 export default async (request, context) => {
-  // Use the context provided by the Auth0 extension automatically
-  const { auth0 } = context;
+  // 1. Check for the Auth0 session cookie (usually named 'appSession')
+  const hasSession = request.headers.get("cookie")?.includes("appSession");
 
-  if (!auth0) {
-    console.error("Auth0 extension not found in context. Check extension link.");
-    return new Response("Auth0 Extension Error", { status: 500 });
+  if (!hasSession) {
+    // 2. Build your Auth0 Login URL manually
+    const domain = "dev-c48iqffskp7vzvms.auth0.com";
+    const clientId = "LUmC8kUGIpxYkQSWN2keGeKYcu0do9dJ";
+    const redirectUri = "veusdealers.netlify.app"; // Your site URL
+    
+    const auth0LoginUrl = `https://${domain}/authorize?response_type=code&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=openid%20profile%20email`;
+
+    // 3. Force redirect to Auth0 login
+    return Response.redirect(auth0LoginUrl, 302);
   }
 
-  try {
-    const user = await auth0.getUser();
-
-    if (!user) {
-      // If no user session, redirect to the Auth0-hosted login page
-      return auth0.loginRedirect();
-    }
-
-    // Authenticated: allow access to /dealer-portal
-    return;
-  } catch (error) {
-    console.error("Auth0 Guard Error:", error);
-    return new Response("Authentication Error", { status: 500 });
-  }
+  // If session exists, let them through
+  return;
 };
 
 export const config = {
