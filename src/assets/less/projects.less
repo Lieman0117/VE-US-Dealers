@@ -128,6 +128,36 @@
             position: relative;
         }
 
+        .cs-select-label {
+            height: 4em;
+            line-height: 4em;
+            padding: 0 3rem 0 1rem;
+
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+
+            box-sizing: border-box;
+        }
+        
+        .cs-label:has(.cs-select-label)::after {
+            content: "";
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+
+            width: 0;
+            height: 0;
+
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 7px solid var(--primary);
+
+            pointer-events: none;
+        }
+
+
         .cs-input,
         .cs-textarea,
         select,
@@ -262,6 +292,7 @@
             .cs-topper {
                 color: var(--primaryLight);
             }
+
             .cs-title,
             .cs-text {
                 color: var(--bodyTextColorWhite);
@@ -276,18 +307,35 @@
             }
 
             .cs-input,
-            .cs-textarea {
+            .cs-textarea,
+            .cs-select-label select {
                 background-color: var(--accent);
                 color: var(--bodyTextColorWhite);
+
                 &::placeholder {
                     color: var(--bodyTextColorWhite);
                     opacity: 0.5;
                 }
             }
+
+            .cs-select-label {
+            background-color: var(--accent);
+            color: var(--bodyTextColorWhite);
+
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+
+            border: none;
+        }
+
+            .cs-select-label option {
+                background-color: var(--accent);
+                color: var(--bodyTextColorWhite);
+            }
         }
     }
 }
-
                                 
 
 /*-- -------------------------- -->
