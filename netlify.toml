@@ -13,6 +13,6 @@ package = "netlify-plugin-cache"
 
 
 [[edge_functions]]
-  path = "/Dealer-Portal
+  path = "/dealer-portal/
   function = "auth-guard"
 
