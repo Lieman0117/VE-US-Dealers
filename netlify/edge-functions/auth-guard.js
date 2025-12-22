@@ -1,13 +1,23 @@
 // netlify/edge-functions/auth-guard.js
 export default async (request, context) => {
-  // Check for a valid user session provided by the Auth0 extension
-  const user = await context.auth0?.getUser(); 
+  try {
+    // Check if the Auth0 extension is active on this request
+    const user = await context.auth0?.getUser();
 
-  if (!user) {
-    // Redirect unauthorized users to the Auth0 login page
-    return context.auth0.loginRedirect();
+    // If no user is logged in, redirect to the Auth0 login screen
+    if (!user) {
+      return context.auth0.loginRedirect();
+    }
+
+    // User is logged in, continue to the Eleventy page
+    return; 
+  } catch (error) {
+    console.error("Auth0 Edge Function Error:", error);
+    // Fallback: if there's a system error, redirect to home to prevent the "Crashed" screen
+    return new Response(null, { status: 302, headers: { Location: "/" } });
   }
+};
 
-  // If logged in, allow them to see the Eleventy-generated page
-  return;
+export const config = {
+  path: "/your-protected-page", // Replace with your actual Eleventy page path
 };
