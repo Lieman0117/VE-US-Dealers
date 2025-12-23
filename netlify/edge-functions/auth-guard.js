@@ -7,7 +7,7 @@ export default async (request, context) => {
 
     // 1. HANDLE CALLBACK: Returning from Auth0
     if (url.searchParams.has("code")) {
-      // Use a relative path starting with / to prevent domain doubling
+      // Use the 'state' or a simple redirect back to the portal
       return new Response(null, {
         status: 302,
         headers: {
@@ -17,13 +17,12 @@ export default async (request, context) => {
       });
     }
 
-    // 2. PROTECT PORTAL: Check for session
-    if (url.pathname.startsWith("/dealer-portal")) {
+    // 2. PROTECT PORTAL & ORDER: Check for session
+    // Added protection for any path starting with /dealer-portal OR /order
+    if (url.pathname.startsWith("/dealer-portal") || url.pathname.startsWith("/order")) {
       const hasSession = request.headers.get("cookie")?.includes("appSession=true");
 
       if (!hasSession) {
-        // This is the ONLY place you should use the full URL https://...
-        // Ensure this EXACT string matches your Auth0 dashboard (https and /)
         const redirectUri = "https://veusdealers.netlify.app/"; 
         
         const auth0Url = `https://${domain}/authorize?` + 
