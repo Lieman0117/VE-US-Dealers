@@ -1,23 +1,26 @@
 // netlify/edge-functions/auth-guard.js
 export default async (request, context) => {
   const url = new URL(request.url);
+  
+  // Use Netlify.env.get for 2025 security compliance
   const domain = Netlify.env.get("AUTH0_DOMAIN");
   const clientId = Netlify.env.get("AUTH0_CLIENT_ID");
 
-  // 1. Handle return from Auth0 (The "Callback")
+  // A. HANDLE CALLBACK: When returning from Auth0 with a ?code=
+  // This must catch the code and set the cookie before redirecting to the portal
   if (url.searchParams.has("code")) {
-    const response = Response.redirect(new URL("/dealer-portal", request.url), 302);
-    // Set cookie to remember user is logged in
+    const response = Response.redirect(new URL("/dealer-portal/", request.url), 302);
+    // Setting appSession=true allows the 'if' block below to pass next time
     response.headers.append("Set-Cookie", "appSession=true; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600");
     return response;
   }
 
-  // 2. Protect the /dealer-portal path
+  // B. PROTECT PORTAL: Check if visiting the dealer portal
   if (url.pathname.startsWith("/dealer-portal")) {
     const hasSession = request.headers.get("cookie")?.includes("appSession=true");
 
     if (!hasSession) {
-      // THE FIX: This MUST match your Auth0 dashboard exactly (including https and /)
+      // MANDATORY: This string must match your Auth0 dashboard EXACTLY
       const redirectUri = "veusdealers.netlify.app"; 
       
       const auth0Url = `https://${domain}/authorize?` + 
@@ -34,5 +37,5 @@ export default async (request, context) => {
 };
 
 export const config = {
-  path: "/*",
+  path: "/*", 
 };
