@@ -21,7 +21,7 @@ export default async (request, context) => {
 
     if (!hasSession) {
       // MANDATORY: This string must match your Auth0 dashboard EXACTLY
-      const redirectUri = "veusdealers.netlify.app"; 
+      const redirectUri = "https://veusdealers.netlify.app/"; 
       
       const auth0Url = `https://${domain}/authorize?` + 
         `response_type=code&` +
