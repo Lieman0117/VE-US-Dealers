@@ -22,7 +22,7 @@ export default async (request, context) => {
       if (!cookie.includes("appSession=true")) {
         
         // THE REDIRECT_URI MUST BE AN EXACT MATCH
-        const redirectUri = "veusdealers.netlify.app"; 
+        const redirectUri = "https://veusdealers.netlify.app/"; 
         
         const auth0Url = `https://${domain}/authorize?` + 
           `response_type=code&` +
