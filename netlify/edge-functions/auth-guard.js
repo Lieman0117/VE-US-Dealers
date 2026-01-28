@@ -2,12 +2,12 @@
 export default async (request, context) => {
   try {
     const url = new URL(request.url);
-    const domain = Deno.env.get("AUTH0_DOMAIN");
+    const domain = Deno.env.get("AUTH0_DOMAIN");       // Set this to login.vehicleelectronics.us
     const clientId = Deno.env.get("AUTH0_CLIENT_ID");
 
-    // 1. HANDLE CALLBACK: Returning from Auth0
+    // 1. HANDLE CALLBACK FROM AUTH0
     if (url.searchParams.has("code")) {
-      // Use the 'state' or a simple redirect back to the portal
+      // Auth0 returns ?code=...&state=...
       return new Response(null, {
         status: 302,
         headers: {
@@ -17,13 +17,12 @@ export default async (request, context) => {
       });
     }
 
-    // 2. PROTECT PORTAL & ORDER: Check for session
-    // Added protection for any path starting with /dealer-portal OR /order
+    // 2. PROTECT /dealer-portal AND /order
     if (url.pathname.startsWith("/dealer-portal") || url.pathname.startsWith("/order")) {
       const hasSession = request.headers.get("cookie")?.includes("appSession=true");
 
       if (!hasSession) {
-        const redirectUri = "https://vehicleelectronics.us/"; 
+        const redirectUri = "https://vehicleelectronics.us/dealer-portal/"; // Must match Allowed Callback URLs
         
         const auth0Url = `https://${domain}/authorize?` + 
           `response_type=code&` +
@@ -35,7 +34,9 @@ export default async (request, context) => {
       }
     }
 
+    // Let public paths pass
     return;
+
   } catch (err) {
     return new Response(`Error: ${err.message}`, { status: 500 });
   }
