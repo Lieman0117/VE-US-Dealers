@@ -23,7 +23,7 @@ export default async (request, context) => {
       const hasSession = request.headers.get("cookie")?.includes("appSession=true");
 
       if (!hasSession) {
-        const redirectUri = "https://veusdealers.netlify.app/"; 
+        const redirectUri = "https://vehicleelectronics.us/"; 
         
         const auth0Url = `https://${domain}/authorize?` + 
           `response_type=code&` +
