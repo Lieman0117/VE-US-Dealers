@@ -1,17 +1,17 @@
-// netlify/edge-functions/auth-guard.js
 export default async (request, context) => {
   try {
     const url = new URL(request.url);
-    const domain = Deno.env.get("AUTH0_DOMAIN");       // Set this to login.vehicleelectronics.us
+
+    const domain = Deno.env.get("AUTH0_DOMAIN");
     const clientId = Deno.env.get("AUTH0_CLIENT_ID");
+    const redirectUri = Deno.env.get("AUTH0_REDIRECT_URI"); // <-- use env variable
 
     // 1. HANDLE CALLBACK FROM AUTH0
     if (url.searchParams.has("code")) {
-      // Auth0 returns ?code=...&state=...
       return new Response(null, {
         status: 302,
         headers: {
-          "Location": "/dealer-portal/",
+          "Location": "/Dealer-Portal/",
           "Set-Cookie": "appSession=true; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=3600"
         }
       });
@@ -22,9 +22,7 @@ export default async (request, context) => {
       const hasSession = request.headers.get("cookie")?.includes("appSession=true");
 
       if (!hasSession) {
-        const redirectUri = "https://vehicleelectronics.us/dealer-portal/"; // Must match Allowed Callback URLs
-        
-        const auth0Url = `https://${domain}/authorize?` + 
+        const auth0Url = `https://${domain}/authorize?` +
           `response_type=code&` +
           `client_id=${clientId}&` +
           `redirect_uri=${encodeURIComponent(redirectUri)}&` +
@@ -34,9 +32,7 @@ export default async (request, context) => {
       }
     }
 
-    // Let public paths pass
     return;
-
   } catch (err) {
     return new Response(`Error: ${err.message}`, { status: 500 });
   }
