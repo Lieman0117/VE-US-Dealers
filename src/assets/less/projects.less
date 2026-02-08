@@ -630,3 +630,554 @@
         color: var(--bodyTextColorWhite);
     }
 }
+
+
+/*-- -------------------------- -->
+<---    Dealer Order Styles    -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #cs-contact-549 {
+        .cs-order-date {
+            width: 100%;
+            font-size: (18/16rem);
+            font-weight: 700;
+            margin-bottom: (24/16rem);
+            padding: (16/16rem);
+            background: #f8f9fa;
+            border-radius: (4/16rem);
+            
+            strong {
+                color: var(--primary);
+            }
+        }
+
+        .cs-product-section {
+            width: 100%;
+            margin-bottom: (32/16rem);
+            padding: (24/16rem);
+            background: #f8f9fa;
+            border: 2px solid #e8e8e8;
+            border-radius: (8/16rem);
+            transition: border-color 0.3s;
+
+            &:hover {
+                border-color: var(--primary);
+            }
+        }
+
+        .cs-product-label {
+            margin-bottom: (16/16rem);
+        }
+
+        .cs-product-header {
+            display: flex;
+            flex-direction: column;
+            gap: (8/16rem);
+
+            strong {
+                font-size: (18/16rem);
+                line-height: 1.4em;
+                color: #1a1a1a;
+            }
+
+            .cs-product-includes {
+                font-size: (14/16rem);
+                color: var(--bodyTextColor);
+                font-style: italic;
+            }
+
+            .cs-warranty {
+                font-size: (14/16rem);
+                color: var(--bodyTextColor);
+            }
+
+            .cs-product-price {
+                font-size: (20/16rem);
+                font-weight: 700;
+                color: var(--primary);
+                margin-top: (8/16rem);
+            }
+        }
+
+        .cs-quantity-label {
+            width: 100%;
+            max-width: (200/16rem);
+        }
+
+        .cs-subtotal {
+            font-size: (18/16rem);
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: (16/16rem);
+            text-align: right;
+
+            span {
+                font-size: (22/16rem);
+            }
+        }
+
+        .cs-order-total {
+            width: 100%;
+            font-size: (20/16rem);
+            font-weight: 700;
+            text-align: right;
+            padding: (24/16rem);
+            margin: (32/16rem) 0;
+            background: var(--primary);
+            color: #1a1a1a;
+            border-radius: (8/16rem);
+
+            strong {
+                display: block;
+                font-size: (24/16rem);
+            }
+
+            span {
+                font-size: (28/16rem);
+            }
+        }
+
+        .cs-delivery-section {
+            width: 100%;
+            margin: (32/16rem) 0 (24/16rem) 0;
+            padding-bottom: (16/16rem);
+            border-bottom: 2px solid var(--primary);
+
+            h3 {
+                font-size: (22/16rem);
+                font-weight: 700;
+                color: #1a1a1a;
+                margin: 0;
+            }
+        }
+
+        .cs-payment-notice {
+            width: 100%;
+            padding: (24/16rem);
+            margin: (24/16rem) 0;
+            background: #d1ecf1;
+            border: 2px solid #0c5460;
+            border-radius: (8/16rem);
+            text-align: center;
+
+            p {
+                font-size: (16/16rem);
+                line-height: 1.6em;
+                color: #0c5460;
+                margin: (8/16rem) 0;
+
+                &:first-child {
+                    margin-top: 0;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                strong {
+                    font-weight: 700;
+                }
+            }
+
+            .cs-zelle-instruction {
+                font-size: (18/16rem);
+                margin-top: (12/16rem);
+
+                strong {
+                    color: #0066cc;
+                    font-size: (20/16rem);
+                }
+            }
+        }
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #cs-contact-549 {
+        .cs-product-header {
+            strong {
+                font-size: (20/16rem);
+            }
+
+            .cs-product-includes,
+            .cs-warranty {
+                font-size: (15/16rem);
+            }
+
+            .cs-product-price {
+                font-size: (22/16rem);
+            }
+        }
+    }
+}
+
+/*-- -------------------------- -->
+<---   Order Confirmation       -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #cs-order-confirmation {
+        padding: var(--sectionPadding);
+        background-color: #f8f9fa;
+
+        .cs-container {
+            width: 100%;
+            max-width: (900/16rem);
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cs-confirmation-box {
+            width: 100%;
+            background: #ffffff;
+            border: 3px solid var(--primary);
+            border-radius: (12/16rem);
+            padding: clamp(2rem, 5vw, 3rem);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .cs-confirmation-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin: 0 0 (32/16rem) 0;
+        }
+
+        .cs-order-summary-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: (8/16rem);
+            padding: (24/16rem);
+            margin-bottom: (32/16rem);
+
+            h3 {
+                font-size: (22/16rem);
+                font-weight: 700;
+                color: #1a1a1a;
+                margin: 0 0 (16/16rem) 0;
+            }
+
+            #order-items {
+                p {
+                    font-size: (16/16rem);
+                    line-height: 1.6em;
+                    color: #1a1a1a;
+                    margin: (8/16rem) 0;
+
+                    strong {
+                        color: var(--primary);
+                    }
+                }
+            }
+
+            .cs-total-line {
+                font-size: (20/16rem);
+                font-weight: 700;
+                margin-top: (16/16rem);
+                padding-top: (16/16rem);
+                border-top: 2px solid #ffc107;
+
+                strong {
+                    color: #1a1a1a;
+                }
+
+                span {
+                    color: var(--primary);
+                    font-size: (24/16rem);
+                }
+            }
+        }
+
+        .cs-payment-instructions-box {
+            h3 {
+                font-size: clamp(1.25rem, 3vw, 1.75rem);
+                font-weight: 700;
+                color: #1a1a1a;
+                text-align: center;
+                margin: 0 0 (32/16rem) 0;
+            }
+        }
+
+        .cs-payment-step {
+            display: flex;
+            align-items: flex-start;
+            gap: (20/16rem);
+            margin-bottom: (24/16rem);
+            padding: (20/16rem);
+            background: #f8f9fa;
+            border-left: 4px solid var(--primary);
+            border-radius: (8/16rem);
+            transition: transform 0.3s, box-shadow 0.3s;
+
+            &:hover {
+                transform: translateX(8px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+        }
+
+        .cs-step-number {
+            min-width: (40/16rem);
+            width: (40/16rem);
+            height: (40/16rem);
+            background: var(--primary);
+            color: #1a1a1a;
+            font-size: (20/16rem);
+            font-weight: 700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .cs-step-text {
+            flex: 1;
+
+            strong {
+                font-size: (17/16rem);
+                font-weight: 700;
+                color: #1a1a1a;
+                display: block;
+                margin-bottom: (8/16rem);
+            }
+        }
+
+        .cs-zelle-email-display {
+            font-size: clamp(1.25rem, 3vw, 1.5rem);
+            font-weight: 700;
+            color: #0066cc;
+            background: #e7f3ff;
+            padding: (12/16rem) (20/16rem);
+            border-radius: (6/16rem);
+            display: inline-block;
+            margin-top: (8/16rem);
+            word-break: break-all;
+        }
+
+        .cs-payment-amount-display {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            color: var(--primary);
+            background: #fff;
+            padding: (12/16rem) (20/16rem);
+            border: 2px solid var(--primary);
+            border-radius: (6/16rem);
+            display: inline-block;
+            margin-top: (8/16rem);
+        }
+
+        .cs-delivery-info {
+            background: #d1ecf1;
+            border: 2px solid #0c5460;
+            border-radius: (8/16rem);
+            padding: (20/16rem);
+            margin-top: (32/16rem);
+
+            p {
+                font-size: (16/16rem);
+                line-height: 1.6em;
+                color: #0c5460;
+                margin: (8/16rem) 0;
+
+                &:first-child {
+                    margin-top: 0;
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                strong {
+                    font-weight: 700;
+                }
+            }
+        }
+    }
+}
+
+/* Tablet - 768px */
+@media only screen and (min-width: 48rem) {
+    #cs-order-confirmation {
+        .cs-payment-step {
+            gap: (24/16rem);
+        }
+
+        .cs-step-number {
+            min-width: (50/16rem);
+            width: (50/16rem);
+            height: (50/16rem);
+            font-size: (24/16rem);
+        }
+
+        .cs-step-text {
+            strong {
+                font-size: (18/16rem);
+            }
+        }
+    }
+}
+
+/* Dark Mode */
+@media only screen and (min-width: 0rem) {
+    body.dark-mode {
+        #cs-contact-549 {
+            .cs-order-date {
+                background: var(--dark);
+                color: var(--bodyTextColorWhite);
+                
+                strong {
+                    color: var(--primaryLight);
+                }
+            }
+
+            .cs-product-section {
+                background: var(--dark);
+                border-color: var(--medium);
+
+                &:hover {
+                    border-color: var(--primaryLight);
+                }
+            }
+
+            .cs-product-header {
+                strong,
+                .cs-product-includes,
+                .cs-warranty {
+                    color: var(--bodyTextColorWhite);
+                }
+
+                .cs-product-includes,
+                .cs-warranty {
+                    opacity: 0.8;
+                }
+
+                .cs-product-price {
+                    color: var(--primaryLight);
+                }
+            }
+
+            .cs-subtotal {
+                color: var(--primaryLight);
+            }
+
+            .cs-order-total {
+                background: var(--primaryLight);
+                color: var(--dark);
+            }
+
+            .cs-delivery-section {
+                border-bottom-color: var(--primaryLight);
+
+                h3 {
+                    color: var(--bodyTextColorWhite);
+                }
+            }
+
+            .cs-payment-notice {
+                background: rgba(23, 162, 184, 0.2);
+                border-color: #17a2b8;
+
+                p {
+                    color: var(--bodyTextColorWhite);
+                }
+
+                .cs-zelle-instruction strong {
+                    color: #4da6ff;
+                }
+            }
+        }
+
+        #cs-order-confirmation {
+            background-color: var(--dark);
+
+            .cs-confirmation-box {
+                background: var(--medium);
+                border-color: var(--primaryLight);
+            }
+
+            .cs-confirmation-title {
+                color: var(--primaryLight);
+            }
+
+            .cs-order-summary-box {
+                background: rgba(255, 195, 7, 0.15);
+                border-color: var(--primary);
+
+                h3 {
+                    color: var(--bodyTextColorWhite);
+                }
+
+                #order-items p {
+                    color: var(--bodyTextColorWhite);
+
+                    strong {
+                        color: var(--primaryLight);
+                    }
+                }
+
+                .cs-total-line {
+                    border-top-color: var(--primary);
+
+                    strong {
+                        color: var(--bodyTextColorWhite);
+                    }
+
+                    span {
+                        color: var(--primaryLight);
+                    }
+                }
+            }
+
+            .cs-payment-instructions-box h3 {
+                color: var(--bodyTextColorWhite);
+            }
+
+            .cs-payment-step {
+                background: var(--dark);
+                border-left-color: var(--primaryLight);
+
+                &:hover {
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                }
+            }
+
+            .cs-step-number {
+                background: var(--primaryLight);
+                color: var(--dark);
+            }
+
+            .cs-step-text strong {
+                color: var(--bodyTextColorWhite);
+            }
+
+            .cs-zelle-email-display {
+                background: rgba(0, 102, 204, 0.2);
+                color: #4da6ff;
+            }
+
+            .cs-payment-amount-display {
+                background: var(--medium);
+                border-color: var(--primaryLight);
+                color: var(--primaryLight);
+            }
+
+            .cs-delivery-info {
+                background: rgba(23, 162, 184, 0.2);
+                border-color: #17a2b8;
+
+                p {
+                    color: var(--bodyTextColorWhite);
+                }
+            }
+        }
+    }
+}
+
+

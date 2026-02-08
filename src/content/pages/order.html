@@ -14,7 +14,7 @@ permalink: "/order/"
 
 
 <!-- Load the Auth0 SPA SDK -->
-<script src="cdn.auth0.com"></script>
+<script src="https://cdn.auth0.com/js/auth0-spa-js/1.13/auth0-spa-js.production.js"></script>
 
 <script>
   let auth0 = null;
@@ -45,78 +45,207 @@ permalink: "/order/"
 </script>
 
 <!-- ============================================ -->
-<!--                 Contact Form                 -->
+<!--                 Dealer Order Form            -->
 <!-- ============================================ -->
 
 <section id="cs-contact-549">
     <div class="cs-container">
         <div class="cs-content">
             <br><br><br><br><br><br>
-            <span class="cs-topper">Order</span>
-            <h2 class="cs-title">Order Our Batteries</h2>
+            <span class="cs-topper">VehicleElectronics/US</span>
+            <h2 class="cs-title">DEALER ORDER</h2>
             <p class="cs-text">
-                Fill out the form below to place an order for our high-quality lithium batteries. Our team will review your order and get back to you as soon as possible.
+                Fill out quantities needed and delivery information. Orders prepaid via Zelle, normal delivery 7-10 days.
             </p>
         </div>
-        <!--Form-->
-        <form class="cs-form" id="Order" name="Order Form" method="post" netlify>
+        
+        <!--Order Form-->
+        <form class="cs-form" id="Order" name="Order Form" method="post" data-netlify="true" netlify-honeypot="bot-field">
+            <input type="hidden" name="form-name" value="Order Form">
+            <input type="hidden" name="order-date" id="order-date">
+            <p style="display:none;">
+                <label>Don't fill this out if you're human: <input name="bot-field" /></label>
+            </p>
+            
+            <!-- Date Display -->
+            <div class="cs-order-date">
+                <strong>Date:</strong> <span id="current-date"></span>
+            </div>
+
+            <!-- Product 1: 48V -->
+            <div class="cs-product-section">
+                <label class="cs-label cs-product-label">
+                    <div class="cs-product-header">
+                        <strong>VE/US BRAND 48V 100Ah, 200A BMS Smart LFP Lithium Golf Car Battery</strong>
+                        <span class="cs-product-includes">with 48V 18A Lithium AC Charger & Monitor Kit</span>
+                        <span class="cs-warranty">Dealer Price with 5 Year Lithium Battery & 2 Year Charger Warranty</span>
+                        <span class="cs-product-price">$900 each</span>
+                    </div>
+                </label>
+                <label class="cs-label cs-quantity-label">
+                    Quantity
+                    <input class="cs-input cs-quantity" type="number" id="qty-48v" name="quantity-48v" min="0" value="0" data-price="900">
+                </label>
+                <div class="cs-subtotal">
+                    Sub Total: <span id="subtotal-48v">$0</span>
+                </div>
+            </div>
+
+            <!-- Product 2: 36V -->
+            <div class="cs-product-section">
+                <label class="cs-label cs-product-label">
+                    <div class="cs-product-header">
+                        <strong>VE/US Brand 36V 100Ah, 200A BMS Smart LFP Lithium Golf Car Battery</strong>
+                        <span class="cs-product-includes">with 36V 25A Lithium AC Charger & Monitor Kit</span>
+                        <span class="cs-warranty">Dealer Price with 5 Year Lithium Battery & 2 Year Charger Warranty</span>
+                        <span class="cs-product-price">$750 each</span>
+                    </div>
+                </label>
+                <label class="cs-label cs-quantity-label">
+                    Quantity
+                    <input class="cs-input cs-quantity" type="number" id="qty-36v" name="quantity-36v" min="0" value="0" data-price="750">
+                </label>
+                <div class="cs-subtotal">
+                    Sub Total: <span id="subtotal-36v">$0</span>
+                </div>
+            </div>
+
+            <!-- Product 3: 12V -->
+            <div class="cs-product-section">
+                <label class="cs-label cs-product-label">
+                    <div class="cs-product-header">
+                        <strong>VE/US Brand 12V 314Ah (Compact 320) Smart LFP Lithium</strong>
+                        <span class="cs-warranty">Dealer Price with 5 Year Warranty</span>
+                        <span class="cs-product-price">$495 each</span>
+                    </div>
+                </label>
+                <label class="cs-label cs-quantity-label">
+                    Quantity
+                    <input class="cs-input cs-quantity" type="number" id="qty-12v" name="quantity-12v" min="0" value="0" data-price="495">
+                </label>
+                <div class="cs-subtotal">
+                    Sub Total: <span id="subtotal-12v">$0</span>
+                </div>
+            </div>
+
+            <!-- Total -->
+            <div class="cs-order-total">
+                <strong>Dealer Total Zelle Payment: <span id="grand-total">$0</span></strong>
+            </div>
+            <input type="hidden" name="total-amount" id="total-amount">
+            <input type="hidden" name="product-48v-subtotal" id="hidden-subtotal-48v">
+            <input type="hidden" name="product-36v-subtotal" id="hidden-subtotal-36v">
+            <input type="hidden" name="product-12v-subtotal" id="hidden-subtotal-12v">
+
+            <!-- Delivery Section -->
+            <div class="cs-delivery-section">
+                <h3>Delivery To:</h3>
+            </div>
+
             <label class="cs-label">
-                Name
-                <input class="cs-input" required type="text" id="name-order" name="name" placeholder="Name">
+                Contact Name
+                <input class="cs-input" required type="text" id="name-order" name="name" placeholder="Contact Name">
                 <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/person-gold.svg" alt="person icon" width="32" height="32">
             </label>
-            <label class="cs-label cs-email">
-                Email
-                <input class="cs-input" required type="text" id="email-order" name="email" placeholder="Email">
-                <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/mail-gold.svg" alt="mail icon" width="32" height="32">
-            </label>
-            <label class="cs-label cs-phone">
-                Phone
-                <input class="cs-input" required type="text" id="phone-order" name="phone" placeholder="Phone">
+
+            <label class="cs-label">
+                Phone Number
+                <input class="cs-input" required type="tel" id="phone-order" name="phone" placeholder="Phone Number">
                 <img class="cs-icon" loading="lazy" decoding="async" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Contact-Page/phone-golden.svg" alt="phone icon" width="32" height="32">
             </label>
-            <label class="cs-label cs-phone">
-                Address Line 1
+
+            <label class="cs-label">
+                Street Address
                 <input class="cs-input" required type="text" id="address1-order" name="address1" placeholder="Street Address">
             </label>
-            <label class="cs-label cs-phone">
+
+            <label class="cs-label">
                 Address Line 2
                 <input class="cs-input" type="text" id="address2-order" name="address2" placeholder="Apt, Suite, etc. (optional)">
             </label>
-            <label class="cs-label cs-phone">
+
+            <label class="cs-label">
                 City
                 <input class="cs-input" required type="text" id="city-order" name="city" placeholder="City">
             </label>
-            <label class="cs-label cs-phone">
+
+            <label class="cs-label">
                 State
                 <input class="cs-input" required type="text" id="state-order" name="state" placeholder="State">
             </label>
-            <label class="cs-label cs-phone">
+
+            <label class="cs-label">
                 Zip Code
                 <input class="cs-input" required type="text" id="zip-order" name="zip" placeholder="Zip Code">
             </label>
-            <label class="cs-label cs-phone">
-                Product
-                 <select class="cs-select-label" required name="product" id="product-order" placeholder="Select Product">
-                    <option value="" disabled selected>Select Product</option>
-                    <option value="Golf Cart 48v 100ah">Golf Cart Battery 48v 100ah - $900</option>
-                    <option value="Golf Cart 36v 100ah">Golf Cart Battery 36v 100ah - $750</option>
-                    <option value="RV and BoatBattery 12v 320ah">RV and Boat Battery 12v 320ah - $495</option>
-                </select> 
-            </label>
-            <label class="cs-label cs-phone">
-                Quantity
-                <input class="cs-input" required type="number" id="quantity-order" name="quantity" placeholder="Quantity">
-            </label>
-            <label class="cs-label cs-textarea-label">
-                Message
-                <textarea class="cs-textarea" name="Message" id="message-order" placeholder="Write message..."></textarea>
-            </label>
-            <button class="cs-submit" type="submit">Send</button>
+
+            <!-- Payment Instructions Notice -->
+            <div class="cs-payment-notice">
+                <p><strong>Orders Prepaid</strong></p>
+                <p class="cs-zelle-instruction">Zelle payment to: <strong>veusllc@gmail.com</strong></p>
+            </div>
+
+            <button class="cs-submit" type="submit">Submit Order</button>
         </form>
     </div>
 </section>
-                                
+
+<!-- ============================================ -->
+<!--         Order Confirmation Section           -->
+<!-- ============================================ -->
+<section id="cs-order-confirmation" style="display: none;">
+    <div class="cs-container">
+        <div class="cs-confirmation-box">
+            <h2 class="cs-confirmation-title">✓ Order Submitted Successfully!</h2>
+            
+            <div class="cs-order-summary-box">
+                <h3>Your Order Details</h3>
+                <div id="order-items"></div>
+                <div class="cs-total-line">
+                    <strong>Dealer Total Zelle Payment: <span id="confirm-total"></span></strong>
+                </div>
+            </div>
+
+            <div class="cs-payment-instructions-box">
+                <h3>Complete Your Payment</h3>
+                
+                <div class="cs-payment-step">
+                    <div class="cs-step-number">1</div>
+                    <div class="cs-step-text">
+                        <strong>Open Zelle in your bank app or online banking</strong>
+                    </div>
+                </div>
+
+                <div class="cs-payment-step">
+                    <div class="cs-step-number">2</div>
+                    <div class="cs-step-text">
+                        <strong>Send payment to:</strong>
+                        <div class="cs-zelle-email-display">veusllc@gmail.com</div>
+                    </div>
+                </div>
+
+                <div class="cs-payment-step">
+                    <div class="cs-step-number">3</div>
+                    <div class="cs-step-text">
+                        <strong>Amount:</strong>
+                        <div class="cs-payment-amount-display" id="zelle-amount"></div>
+                    </div>
+                </div>
+
+                <div class="cs-payment-step">
+                    <div class="cs-step-number">4</div>
+                    <div class="cs-step-text">
+                        <strong>Add note with your name and order date</strong>
+                    </div>
+                </div>
+
+                <div class="cs-delivery-info">
+                    <p>We'll confirm receipt of your payment and provide tracking information within 24 hours.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- =============================== -->
 <!--        Zelle Payment Notice     -->
@@ -138,7 +267,7 @@ permalink: "/order/"
             </p>
 
             <p class="cs-text" style="margin-bottom: 0;">
-                VE/US’s goal is to eliminate all unnecessary costs for providing
+                VE/US's goal is to eliminate all unnecessary costs for providing
                 Dealers the best value-engineered products currently available to
                 local service and parts Dealers.
             </p>
@@ -146,6 +275,121 @@ permalink: "/order/"
     </div>
 </section>
 
+<script>
+// Set current date
+const today = new Date();
+const dateString = today.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+});
+document.getElementById('current-date').textContent = dateString;
+document.getElementById('order-date').value = dateString;
 
+// Calculate subtotals and grand total
+function calculateTotals() {
+    const quantities = document.querySelectorAll('.cs-quantity');
+    let grandTotal = 0;
+    
+    quantities.forEach(function(input) {
+        const qty = parseInt(input.value) || 0;
+        const price = parseInt(input.getAttribute('data-price'));
+        const subtotal = qty * price;
+        
+        const subtotalId = 'subtotal-' + input.id.replace('qty-', '');
+        const subtotalElement = document.getElementById(subtotalId);
+        if (subtotalElement) {
+            subtotalElement.textContent = '$' + subtotal;
+        }
+        
+        const hiddenSubtotalId = 'hidden-subtotal-' + input.id.replace('qty-', '');
+        const hiddenElement = document.getElementById(hiddenSubtotalId);
+        if (hiddenElement) {
+            hiddenElement.value = subtotal;
+        }
+        
+        grandTotal += subtotal;
+    });
+    
+    const grandTotalElement = document.getElementById('grand-total');
+    if (grandTotalElement) {
+        grandTotalElement.textContent = '$' + grandTotal;
+    }
+    
+    const totalAmountElement = document.getElementById('total-amount');
+    if (totalAmountElement) {
+        totalAmountElement.value = grandTotal;
+    }
+}
+
+// Add event listeners to all quantity inputs
+document.querySelectorAll('.cs-quantity').forEach(function(input) {
+    input.addEventListener('input', calculateTotals);
+});
+
+// Handle form submission
+document.getElementById('Order').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const grandTotal = document.getElementById('total-amount').value;
+    
+    if (grandTotal === '0' || grandTotal === '') {
+        alert('Please select at least one product with quantity greater than 0');
+        return;
+    }
+    
+    // Build order items summary
+    const orderItemsHTML = [];
+    const qty48v = parseInt(document.getElementById('qty-48v').value) || 0;
+    const qty36v = parseInt(document.getElementById('qty-36v').value) || 0;
+    const qty12v = parseInt(document.getElementById('qty-12v').value) || 0;
+    
+    if (qty48v > 0) {
+        orderItemsHTML.push('<p><strong>' + qty48v + 'x</strong> 48V 100Ah Golf Cart Battery @ $900 = <strong>$' + (qty48v * 900) + '</strong></p>');
+    }
+    if (qty36v > 0) {
+        orderItemsHTML.push('<p><strong>' + qty36v + 'x</strong> 36V 100Ah Golf Cart Battery @ $750 = <strong>$' + (qty36v * 750) + '</strong></p>');
+    }
+    if (qty12v > 0) {
+        orderItemsHTML.push('<p><strong>' + qty12v + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (qty12v * 495) + '</strong></p>');
+    }
+    
+    // Update confirmation section
+    const orderItemsElement = document.getElementById('order-items');
+    if (orderItemsElement) {
+        orderItemsElement.innerHTML = orderItemsHTML.join('');
+    }
+    
+    const confirmTotalElement = document.getElementById('confirm-total');
+    if (confirmTotalElement) {
+        confirmTotalElement.textContent = '$' + grandTotal;
+    }
+    
+    const zelleAmountElement = document.getElementById('zelle-amount');
+    if (zelleAmountElement) {
+        zelleAmountElement.textContent = '$' + grandTotal;
+    }
+    
+    // Submit to Netlify
+    fetch('/', {
+        method: 'POST',
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(this)).toString()
+    }).then(function() {
+        // Hide form sections, show confirmation
+        document.querySelectorAll('#cs-contact-549').forEach(function(section) {
+            section.style.display = 'none';
+        });
+        const confirmationSection = document.getElementById('cs-order-confirmation');
+        if (confirmationSection) {
+            confirmationSection.style.display = 'block';
+            confirmationSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }).catch(function(error) {
+        alert('Error submitting order. Please try again or contact us directly.');
+        console.error(error);
+    });
+});
+</script>
 
 {% endblock %}
