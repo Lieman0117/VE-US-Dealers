@@ -1181,3 +1181,175 @@
 }
 
 
+/*-- -------------------------- -->
+<---    Promo Code Styles      -->
+<--- -------------------------- -*/
+
+/* Mobile - 360px */
+@media only screen and (min-width: 0rem) {
+    #cs-contact-549 {
+        .cs-promo-section {
+            width: 100%;
+            padding: (24/16rem);
+            margin: (24/16rem) 0;
+            background: #f8f9fa;
+            border: 2px solid #e8e8e8;
+            border-radius: (8/16rem);
+
+            h3 {
+                font-size: (18/16rem);
+                font-weight: 700;
+                margin: 0 0 (16/16rem) 0;
+                color: #1a1a1a;
+            }
+        }
+
+        .cs-promo-input-wrapper {
+            display: flex;
+            gap: (12/16rem);
+            align-items: flex-end;
+        }
+
+        .cs-promo-label {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .cs-promo-button {
+            font-size: (16/16rem);
+            font-weight: 700;
+            line-height: 1;
+            padding: 0 (24/16rem);
+            height: clamp(4.375rem, 7vw, 5.625rem);
+            background-color: var(--primaryLight);
+            color: #1a1a1a;
+            border: none;
+            border-radius: (4/16rem);
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+
+            &:hover:not(:disabled) {
+                background-color: #000;
+                color: #fff;
+            }
+
+            &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+        }
+
+        .cs-promo-message {
+            margin-top: (12/16rem);
+            padding: (8/16rem) (12/16rem);
+            border-radius: (4/16rem);
+            font-size: (14/16rem);
+            font-weight: 600;
+
+            &.cs-promo-success {
+                background: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            &.cs-promo-error {
+                background: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+
+            &.cs-promo-info {
+                background: #d1ecf1;
+                color: #0c5460;
+                border: 1px solid #bee5eb;
+            }
+        }
+
+        .cs-subtotal-line {
+            font-size: (18/16rem);
+            font-weight: 400;
+            padding: (8/16rem) 0;
+        }
+
+        .cs-discount-line {
+            font-size: (18/16rem);
+            font-weight: 600;
+            padding: (8/16rem) 0;
+            color: #28a745;
+        }
+
+        .cs-total-line {
+            font-size: (20/16rem);
+            font-weight: 700;
+            padding-top: (12/16rem);
+            margin-top: (12/16rem);
+            border-top: 2px solid #1a1a1a;
+
+            strong {
+                display: block;
+            }
+
+            span {
+                font-size: (28/16rem);
+            }
+        }
+    }
+}
+
+/* Mobile Only - 600px and below */
+@media only screen and (max-width: 37.5rem) {
+    #cs-contact-549 {
+        .cs-promo-input-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .cs-promo-button {
+            width: 100%;
+        }
+    }
+}
+
+/* Dark Mode */
+@media only screen and (min-width: 0rem) {
+    body.dark-mode {
+        #cs-contact-549 {
+            .cs-promo-section {
+                background: var(--dark);
+                border-color: var(--medium);
+
+                h3 {
+                    color: var(--bodyTextColorWhite);
+                }
+            }
+
+            .cs-promo-message {
+                &.cs-promo-success {
+                    background: rgba(40, 167, 69, 0.2);
+                    color: #90ee90;
+                    border-color: #28a745;
+                }
+
+                &.cs-promo-error {
+                    background: rgba(220, 53, 69, 0.2);
+                    color: #ff9999;
+                    border-color: #dc3545;
+                }
+
+                &.cs-promo-info {
+                    background: rgba(23, 162, 184, 0.2);
+                    border-color: #17a2b8;
+                    color: var(--bodyTextColorWhite);
+                }
+            }
+
+            .cs-discount-line {
+                color: #90ee90;
+            }
+
+            .cs-total-line {
+                border-top-color: var(--bodyTextColorWhite);
+            }
+        }
+    }
+}

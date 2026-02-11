@@ -128,11 +128,35 @@ permalink: "/order/"
                 </div>
             </div>
 
+            <!-- Promo Code Section -->
+            <div class="cs-promo-section">
+                <h3>Have a Promo Code?</h3>
+                <div class="cs-promo-input-wrapper">
+                    <label class="cs-label cs-promo-label">
+                        Promo Code
+                        <input class="cs-input" type="text" id="promo-code" name="promo-code" placeholder="Enter promo code">
+                    </label>
+                    <button type="button" class="cs-promo-button" id="apply-promo">Apply</button>
+                </div>
+                <div id="promo-message" class="cs-promo-message"></div>
+            </div>
+
             <!-- Total -->
             <div class="cs-order-total">
-                <strong>Dealer Total Zelle Payment: <span id="grand-total">$0</span></strong>
+                <div class="cs-subtotal-line">
+                    Subtotal: <span id="order-subtotal">$0</span>
+                </div>
+                <div id="discount-line" class="cs-discount-line" style="display: none;">
+                    Discount (FIRSTTIME10): <span id="discount-display">-$0</span>
+                </div>
+                <div class="cs-total-line">
+                    <strong>Dealer Total Zelle Payment: <span id="grand-total">$0</span></strong>
+                </div>
             </div>
             <input type="hidden" name="total-amount" id="total-amount">
+            <input type="hidden" name="subtotal-before-discount" id="subtotal-before-discount">
+            <input type="hidden" name="discount-amount-applied" id="discount-amount-applied">
+            <input type="hidden" name="promo-code-applied" id="promo-code-applied">
             <input type="hidden" name="product-48v-subtotal" id="hidden-subtotal-48v">
             <input type="hidden" name="product-36v-subtotal" id="hidden-subtotal-36v">
             <input type="hidden" name="product-12v-subtotal" id="hidden-subtotal-12v">
@@ -293,31 +317,83 @@ const dateString = today.toLocaleDateString('en-US', {
 document.getElementById('current-date').textContent = dateString;
 document.getElementById('order-date').value = dateString;
 
+// Promo code tracking
+let promoApplied = false;
+let discountPercent = 0;
+
 // Calculate subtotals and grand total
 function calculateTotals() {
     const quantities = document.querySelectorAll('.cs-quantity');
-    let grandTotal = 0;
+    let subtotal = 0;
     
     quantities.forEach(function(input) {
         const qty = parseInt(input.value) || 0;
         const price = parseInt(input.getAttribute('data-price'));
-        const subtotal = qty * price;
+        const itemSubtotal = qty * price;
         
         const subtotalId = 'subtotal-' + input.id.replace('qty-', '');
         const subtotalElement = document.getElementById(subtotalId);
         if (subtotalElement) {
-            subtotalElement.textContent = '$' + subtotal;
+            subtotalElement.textContent = '$' + itemSubtotal;
         }
         
         const hiddenSubtotalId = 'hidden-subtotal-' + input.id.replace('qty-', '');
         const hiddenElement = document.getElementById(hiddenSubtotalId);
         if (hiddenElement) {
-            hiddenElement.value = subtotal;
+            hiddenElement.value = itemSubtotal;
         }
         
-        grandTotal += subtotal;
+        subtotal += itemSubtotal;
     });
     
+    // Update subtotal display
+    const subtotalElement = document.getElementById('order-subtotal');
+    if (subtotalElement) {
+        subtotalElement.textContent = '$' + subtotal;
+    }
+    
+    const subtotalBeforeDiscountElement = document.getElementById('subtotal-before-discount');
+    if (subtotalBeforeDiscountElement) {
+        subtotalBeforeDiscountElement.value = subtotal;
+    }
+    
+    // Calculate discount if promo applied
+    let discountAmount = 0;
+    let grandTotal = subtotal;
+    
+    if (promoApplied && discountPercent > 0) {
+        discountAmount = Math.round(subtotal * discountPercent);
+        grandTotal = subtotal - discountAmount;
+        
+        // Show discount line
+        const discountLineElement = document.getElementById('discount-line');
+        if (discountLineElement) {
+            discountLineElement.style.display = 'block';
+        }
+        
+        const discountDisplayElement = document.getElementById('discount-display');
+        if (discountDisplayElement) {
+            discountDisplayElement.textContent = '-$' + discountAmount;
+        }
+        
+        const discountAmountAppliedElement = document.getElementById('discount-amount-applied');
+        if (discountAmountAppliedElement) {
+            discountAmountAppliedElement.value = discountAmount;
+        }
+    } else {
+        // Hide discount line
+        const discountLineElement = document.getElementById('discount-line');
+        if (discountLineElement) {
+            discountLineElement.style.display = 'none';
+        }
+        
+        const discountAmountAppliedElement = document.getElementById('discount-amount-applied');
+        if (discountAmountAppliedElement) {
+            discountAmountAppliedElement.value = 0;
+        }
+    }
+    
+    // Update grand total
     const grandTotalElement = document.getElementById('grand-total');
     if (grandTotalElement) {
         grandTotalElement.textContent = '$' + grandTotal;
@@ -332,6 +408,51 @@ function calculateTotals() {
 // Add event listeners to all quantity inputs
 document.querySelectorAll('.cs-quantity').forEach(function(input) {
     input.addEventListener('input', calculateTotals);
+});
+
+// Handle promo code application
+document.getElementById('apply-promo').addEventListener('click', function() {
+    const promoInput = document.getElementById('promo-code');
+    const promoCode = promoInput.value.trim().toUpperCase();
+    const promoMessage = document.getElementById('promo-message');
+    
+    if (promoCode === 'FIRSTTIME10') {
+        if (promoApplied) {
+            promoMessage.textContent = 'Promo code already applied!';
+            promoMessage.className = 'cs-promo-message cs-promo-info';
+        } else {
+            promoApplied = true;
+            discountPercent = 0.10; // 10%
+            promoMessage.textContent = '✓ Promo code applied! 10% discount';
+            promoMessage.className = 'cs-promo-message cs-promo-success';
+            promoInput.disabled = true;
+            this.disabled = true;
+            this.textContent = 'Applied';
+            
+            // Store promo code in hidden field
+            const promoCodeAppliedElement = document.getElementById('promo-code-applied');
+            if (promoCodeAppliedElement) {
+                promoCodeAppliedElement.value = promoCode;
+            }
+            
+            // Recalculate totals
+            calculateTotals();
+        }
+    } else if (promoCode === '') {
+        promoMessage.textContent = 'Please enter a promo code';
+        promoMessage.className = 'cs-promo-message cs-promo-error';
+    } else {
+        promoMessage.textContent = 'Invalid promo code';
+        promoMessage.className = 'cs-promo-message cs-promo-error';
+    }
+});
+
+// Allow Enter key to apply promo
+document.getElementById('promo-code').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('apply-promo').click();
+    }
 });
 
 // Handle form submission
@@ -359,6 +480,12 @@ document.getElementById('Order').addEventListener('submit', function(e) {
     }
     if (qty12v > 0) {
         orderItemsHTML.push('<p><strong>' + qty12v + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (qty12v * 495) + '</strong></p>');
+    }
+    
+    // Add discount if applied
+    if (promoApplied) {
+        const discountAmount = document.getElementById('discount-amount-applied').value;
+        orderItemsHTML.push('<p style="color: #28a745;"><strong>Discount (FIRSTTIME10):</strong> -$' + discountAmount + '</p>');
     }
     
     // Update confirmation section
