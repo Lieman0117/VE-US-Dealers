@@ -817,16 +817,23 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
 
 // Re-mount Stripe element when total changes (so PaymentIntent has right amount)
 document.querySelectorAll('.cs-quantity').forEach(function(input) {
-    input.addEventListener('change', function() {
+    input.addEventListener('change', async function() {
+        calculateTotals();
         const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
-        if (method === 'stripe') {
-            // Reset so it remounts with updated amount
+        if (method === 'stripe' && stripeElements) {
+            // Reset and remount with updated amount
             stripeElements = null;
             stripePaymentElement = null;
             document.getElementById('stripe-payment-element').innerHTML = '';
-            mountStripeElement();
+            await mountStripeElement();
         }
     });
+});
+
+// Mount Stripe element on page load if Stripe is selected
+document.addEventListener('DOMContentLoaded', async function() {
+    calculateTotals(); // Calculate initial totals
+    await updatePaymentUI(); // This will mount Stripe element if selected
 });
 </script>
 
