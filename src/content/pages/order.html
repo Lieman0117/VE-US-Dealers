@@ -126,48 +126,42 @@ permalink: "/order/"
             cursor: not-allowed;
         }
 
-        /* ── Stripe Loading Overlay ── */
-        #stripe-loading {
+        /* ── Stripe Embedded Card Element ── */
+        #stripe-card-panel {
             display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 18px;
+            background: #f8f9ff;
+            border: 2px solid #635bff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
         }
-        #stripe-loading.active {
-            display: flex;
+        #stripe-card-panel h4 {
+            margin: 0 0 14px 0;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #635bff;
         }
-        .stripe-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(255,255,255,0.25);
+        #stripe-payment-element {
+            margin-bottom: 6px;
+        }
+        #stripe-card-errors {
+            color: #e00;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            min-height: 20px;
+        }
+        .stripe-processing {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.4);
             border-top-color: #fff;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        .stripe-loading-text {
-            color: #fff;
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
+            animation: spin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ── Stripe cancelled/error notice ── */
-        #stripe-cancelled-notice {
-            display: none;
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 8px;
-            padding: 14px 18px;
-            margin: 12px 0;
-            color: #856404;
-            font-size: 0.92rem;
-        }
 
         /* ── Order confirmation: Stripe vs Zelle panels ── */
         .cs-confirm-stripe,
@@ -236,12 +230,6 @@ permalink: "/order/"
   window.onload = initAuth;
 </script>
 
-<!-- Stripe Loading Overlay -->
-<div id="stripe-loading">
-    <div class="stripe-spinner"></div>
-    <div class="stripe-loading-text">Redirecting to Stripe Checkout…</div>
-</div>
-
 <!-- ============================================ -->
 <!--                 Dealer Order Form            -->
 <!-- ============================================ -->
@@ -257,11 +245,6 @@ permalink: "/order/"
             </p>
         </div>
         
-        <!-- Stripe cancelled notice (shown on return from cancelled Stripe session) -->
-        <div id="stripe-cancelled-notice">
-            ⚠️ Payment was cancelled. Your order was not completed. Please try again or choose Zelle.
-        </div>
-
         <!--Order Form-->
         <form class="cs-form" id="Order" name="Order Form" method="post" data-netlify="true" netlify-honeypot="bot-field">
             <input type="hidden" name="form-name" value="Order Form">
@@ -451,6 +434,13 @@ permalink: "/order/"
             </div>
             <!-- END payment method -->
 
+            <!-- Stripe embedded card element — shown when Stripe selected -->
+            <div id="stripe-card-panel">
+                <h4>💳 Enter Card Details</h4>
+                <div id="stripe-payment-element"></div>
+                <div id="stripe-card-errors"></div>
+            </div>
+
             <button class="cs-submit stripe-mode" type="submit" id="submit-btn">
                 Pay with Stripe &amp; Submit Order
             </button>
@@ -557,9 +547,13 @@ permalink: "/order/"
 // ─────────────────────────────────────────────
 //  CONFIG — swap these for your real keys
 // ─────────────────────────────────────────────
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'; // ← your test key
-// Your Netlify Function endpoint that creates a Stripe Checkout Session
-const CREATE_CHECKOUT_URL = '/.netlify/functions/create-checkout-session';
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SejS2INaoLHhx8TLfd98rWVd58OMgTy2gC7gzAA5SJCRyLRJTPdSpsg02TFrw58IZhuMQhw1EvbWn1cBUEUj67900XbYXc90K'; // ← your test publishable key
+const CREATE_PAYMENT_INTENT_URL = '/.netlify/functions/create-payment-intent';
+
+// Init Stripe.js
+const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+let stripeElements = null;
+let stripePaymentElement = null;
 
 // ─────────────────────────────────────────────
 //  Date setup
@@ -577,11 +571,6 @@ document.getElementById('order-date').value = dateString;
 //  Check if returning from cancelled Stripe session
 // ─────────────────────────────────────────────
 const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('cancelled') === '1') {
-    document.getElementById('stripe-cancelled-notice').style.display = 'block';
-    // Clean URL
-    history.replaceState({}, document.title, window.location.pathname);
-}
 
 // ─────────────────────────────────────────────
 //  Payment method toggle
@@ -590,21 +579,61 @@ const submitBtn = document.getElementById('submit-btn');
 const zellePanel = document.getElementById('zelle-info-panel');
 const payMethodHidden = document.getElementById('payment-method-hidden');
 
-function updatePaymentUI() {
+async function updatePaymentUI() {
     const selectedMethod = document.querySelector('input[name="payment-method-radio"]:checked').value;
     payMethodHidden.value = selectedMethod;
-    // Status will be set accurately at submit time; default here for clarity
     document.getElementById('payment-status-hidden').value =
         selectedMethod === 'stripe' ? 'paid' : 'unpaid - pending zelle';
 
+    const cardPanel = document.getElementById('stripe-card-panel');
+
     if (selectedMethod === 'stripe') {
-        submitBtn.textContent = 'Pay with Stripe & Submit Order';
+        submitBtn.textContent = 'Pay & Submit Order';
         submitBtn.classList.add('stripe-mode');
         zellePanel.style.display = 'none';
+        cardPanel.style.display = 'block';
+        // Mount the Payment Element if not already mounted
+        if (!stripeElements) {
+            await mountStripeElement();
+        }
     } else {
         submitBtn.textContent = 'Submit Zelle Order';
         submitBtn.classList.remove('stripe-mode');
         zellePanel.style.display = 'block';
+        cardPanel.style.display = 'none';
+    }
+}
+
+async function mountStripeElement() {
+    const grandTotal = parseInt(document.getElementById('total-amount').value) || 0;
+    if (grandTotal === 0) {
+        // No amount yet — mount a placeholder with $1 so it renders; we'll confirm with real amount at submit
+        // Actually just show the element — amount confirmed at submit time via PaymentIntent
+    }
+    try {
+        // Create a PaymentIntent on the server to get a clientSecret
+        const res = await fetch(CREATE_PAYMENT_INTENT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: Math.max(grandTotal, 1) * 100 }) // cents; min $1 for Stripe
+        });
+        const rawText = await res.text();
+        let json;
+        try { json = JSON.parse(rawText); } catch(e) {
+            document.getElementById('stripe-card-errors').textContent = 'Could not load card form. ' + rawText.substring(0, 100);
+            return;
+        }
+        if (!json.clientSecret) {
+            document.getElementById('stripe-card-errors').textContent = json.error || 'Could not initialize card form.';
+            return;
+        }
+        stripeElements = stripe.elements({ clientSecret: json.clientSecret, appearance: { theme: 'stripe' } });
+        stripePaymentElement = stripeElements.create('payment');
+        stripePaymentElement.mount('#stripe-payment-element');
+        // Store clientSecret for submit
+        document.getElementById('stripe-card-panel').dataset.clientSecret = json.clientSecret;
+    } catch(err) {
+        document.getElementById('stripe-card-errors').textContent = 'Error loading card form: ' + err.message;
     }
 }
 
@@ -715,143 +744,61 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
 
     // ── STRIPE FLOW ──────────────────────────────
     if (selectedMethod === 'stripe') {
+        if (!stripeElements) {
+            alert('Card form is not loaded yet. Please wait a moment and try again.');
+            return;
+        }
+
+        const errorEl = document.getElementById('stripe-card-errors');
+        errorEl.textContent = '';
         submitBtn.disabled = true;
-        document.getElementById('stripe-loading').classList.add('active');
+        submitBtn.innerHTML = '<span class="stripe-processing"></span> Processing…';
 
-        // Collect line items for Stripe
-        const qty48v = parseInt(document.getElementById('qty-48v').value) || 0;
-        const qty36v = parseInt(document.getElementById('qty-36v').value) || 0;
-        const qty12v = parseInt(document.getElementById('qty-12v').value) || 0;
-        const lineItems = [];
-        if (qty48v > 0) lineItems.push({ name: '48V 100Ah LFP Golf Car Battery + Charger', qty: qty48v, unit_price: 900 });
-        if (qty36v > 0) lineItems.push({ name: '36V 100Ah LFP Golf Car Battery + Charger', qty: qty36v, unit_price: 750 });
-        if (qty12v > 0) lineItems.push({ name: '12V 314Ah LFP Battery', qty: qty12v, unit_price: 495 });
+        // Confirm the payment using the embedded Payment Element
+        const clientSecret = document.getElementById('stripe-card-panel').dataset.clientSecret;
+        const { error, paymentIntent } = await stripe.confirmPayment({
+            elements: stripeElements,
+            confirmParams: { return_url: window.location.href }, // fallback only; handled below
+            redirect: 'if_required', // stay on page if no redirect needed (cards)
+        });
 
-        const customerInfo = {
-            name:     document.getElementById('name-order').value,
-            email:    document.getElementById('email-order').value,
-            phone:    document.getElementById('phone-order').value,
-            address1: document.getElementById('address1-order').value,
-            address2: document.getElementById('address2-order').value,
-            city:     document.getElementById('city-order').value,
-            state:    document.getElementById('state-order').value,
-            zip:      document.getElementById('zip-order').value,
-        };
-
-        try {
-            // Call your Netlify function to create a Checkout Session
-            let res;
-            try {
-                res = await fetch(CREATE_CHECKOUT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        lineItems,
-                        customerInfo,
-                        orderDate: dateString,
-                        successUrl: window.location.origin + '/order/?payment=success&session_id={CHECKOUT_SESSION_ID}',
-                        cancelUrl:  window.location.origin + '/order/?cancelled=1',
-                    })
-                });
-            } catch (networkErr) {
-                throw new Error(
-                    'Network error — could not reach the checkout function.\n' +
-                    'Is your Netlify function deployed?\n\n' +
-                    'URL tried: ' + CREATE_CHECKOUT_URL + '\n' +
-                    networkErr.message
-                );
-            }
-
-            // Read raw text first so we can show it if JSON parse fails
-            const rawText = await res.text();
-
-            // Log for debugging
-            console.log('Checkout function response status:', res.status);
-            console.log('Checkout function raw response:', rawText);
-
-            if (!res.ok) {
-                // HTTP error (404, 500, etc.)
-                throw new Error(
-                    'Checkout function returned HTTP ' + res.status + '.\n\n' +
-                    (res.status === 404
-                        ? 'Function not found. Make sure netlify/functions/create-checkout-session.js is deployed and STRIPE_SECRET_KEY is set in Netlify environment variables.'
-                        : 'Response body: ' + rawText.substring(0, 300))
-                );
-            }
-
-            let json;
-            try {
-                json = JSON.parse(rawText);
-            } catch (parseErr) {
-                throw new Error(
-                    'Checkout function returned non-JSON (HTTP ' + res.status + ').\n\n' +
-                    'Raw response (first 300 chars):\n' + rawText.substring(0, 300)
-                );
-            }
-
-            if (json.url || json.sessionId) {
-                // Save the entire form to localStorage before leaving the page
-                // (sessionStorage is cleared on cross-origin navigation from Stripe)
-                localStorage.setItem('veusOrderData', JSON.stringify({
-                    'form-name':        'Order Form',
-                    'order-date':       dateString,
-                    'payment-method':   'stripe / credit card',
-                    'payment-status':   'paid',
-                    'quantity-48v':     document.getElementById('qty-48v').value,
-                    'quantity-36v':     document.getElementById('qty-36v').value,
-                    'quantity-12v':     document.getElementById('qty-12v').value,
-                    'product-48v-subtotal': document.getElementById('hidden-subtotal-48v').value,
-                    'product-36v-subtotal': document.getElementById('hidden-subtotal-36v').value,
-                    'product-12v-subtotal': document.getElementById('hidden-subtotal-12v').value,
-                    'total-amount':     document.getElementById('total-amount').value,
-                    'name':             customerInfo.name,
-                    'email':            customerInfo.email,
-                    'phone':            customerInfo.phone,
-                    'address1':         customerInfo.address1,
-                    'address2':         customerInfo.address2,
-                    'city':             customerInfo.city,
-                    'state':            customerInfo.state,
-                    'zip':              customerInfo.zip,
-                }));
-
-                if (json.url) {
-                    window.location.href = json.url;
-                } else {
-                    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-                    const { error } = await stripe.redirectToCheckout({ sessionId: json.sessionId });
-                    if (error) throw new Error('Stripe.js error: ' + error.message);
-                }
-            } else {
-                throw new Error(
-                    'Checkout function responded OK but returned no sessionId or url.\n\n' +
-                    'Response: ' + JSON.stringify(json)
-                );
-            }
-
-        } catch (err) {
-            document.getElementById('stripe-loading').classList.remove('active');
+        if (error) {
+            // Card declined, validation error, etc.
+            errorEl.textContent = error.message;
             submitBtn.disabled = false;
-            console.error('Stripe checkout error:', err);
+            submitBtn.innerHTML = 'Pay &amp; Submit Order';
+            return;
+        }
 
-            // Show a detailed error panel instead of a plain alert
-            let errorNotice = document.getElementById('stripe-error-notice');
-            if (!errorNotice) {
-                errorNotice = document.createElement('div');
-                errorNotice.id = 'stripe-error-notice';
-                errorNotice.style.cssText = 'background:#fff0f0;border:1px solid #e00;border-radius:8px;padding:16px 18px;margin:12px 0;color:#a00;font-size:0.9rem;white-space:pre-wrap;word-break:break-word;';
-                submitBtn.parentNode.insertBefore(errorNotice, submitBtn);
+        if (paymentIntent && paymentIntent.status === 'succeeded') {
+            // Payment confirmed — now submit full order to Netlify
+            document.getElementById('payment-method-hidden').value = 'stripe / credit card';
+            document.getElementById('payment-status-hidden').value = 'paid';
+
+            const formData = new URLSearchParams(new FormData(document.getElementById('Order')));
+            formData.set('stripe-payment-intent', paymentIntent.id);
+
+            try {
+                await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+            } catch(e) {
+                console.warn('Netlify form submit failed after payment:', e);
             }
-            errorNotice.style.display = 'block';
-            errorNotice.innerHTML =
-                '<strong>⚠️ Stripe checkout failed.</strong> Check the browser console (F12) for full details.<br><br>' +
-                '<code style="font-size:0.82rem;">' + err.message.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</code>' +
-                '<br><br><em>You can still place your order using Zelle by selecting that option above.</em>';
+
+            showConfirmation('stripe', grandTotal);
+        } else {
+            // Unexpected status
+            errorEl.textContent = 'Payment could not be confirmed. Status: ' + (paymentIntent ? paymentIntent.status : 'unknown');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Pay &amp; Submit Order';
         }
         return;
     }
 
     // ── ZELLE FLOW ───────────────────────────────
-    // Set fields explicitly so Netlify / Make.com receive them
     document.getElementById('payment-method-hidden').value = 'zelle';
     document.getElementById('payment-status-hidden').value = 'unpaid - pending zelle';
 
@@ -868,62 +815,19 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
     }
 });
 
-// ─────────────────────────────────────────────
-//  Handle return from Stripe success redirect
-//  (shallow confirmation — real confirmation
-//   should come from your Stripe webhook)
-// ─────────────────────────────────────────────
-if (urlParams.get('payment') === 'success') {
-    const stripeSessionId = urlParams.get('session_id') || '';
-
-    // Restore saved order data from before the Stripe redirect
-    let savedOrder = {};
-    try {
-        savedOrder = JSON.parse(localStorage.getItem('veusOrderData') || '{}');
-        localStorage.removeItem('veusOrderData');
-    } catch(e) {}
-
-    // Merge in the session ID and confirmed paid status
-    savedOrder['stripe-session'] = stripeSessionId;
-    savedOrder['payment-method'] = 'stripe / credit card';
-    savedOrder['payment-status'] = 'paid';
-    if (!savedOrder['form-name']) savedOrder['form-name'] = 'Order Form';
-    if (!savedOrder['order-date']) savedOrder['order-date'] = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
-
-    // Submit the full order to Netlify so Make.com gets everything
-    fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(savedOrder).toString()
-    }).catch(function(e) { console.warn('Netlify Stripe form submission failed:', e); });
-
-    // Build confirmation display from saved data
-    const qty48v = parseInt(savedOrder['quantity-48v']) || 0;
-    const qty36v = parseInt(savedOrder['quantity-36v']) || 0;
-    const qty12v = parseInt(savedOrder['quantity-12v']) || 0;
-    const total  = savedOrder['total-amount'] || '';
-
-    const orderLines = [];
-    if (qty48v > 0) orderLines.push('<p><strong>' + qty48v + 'x</strong> 48V 100Ah Golf Cart Battery @ $900 = <strong>$' + (qty48v * 900) + '</strong></p>');
-    if (qty36v > 0) orderLines.push('<p><strong>' + qty36v + 'x</strong> 36V 100Ah Golf Cart Battery @ $750 = <strong>$' + (qty36v * 750) + '</strong></p>');
-    if (qty12v > 0) orderLines.push('<p><strong>' + qty12v + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (qty12v * 495) + '</strong></p>');
-
-    document.querySelectorAll('#cs-contact-549').forEach(function(s) { s.style.display = 'none'; });
-
-    const confirmationSection = document.getElementById('cs-order-confirmation');
-    if (confirmationSection) {
-        confirmationSection.style.display = 'block';
-        document.getElementById('order-items').innerHTML = orderLines.length
-            ? orderLines.join('')
-            : '<p>Your Stripe payment was completed. A receipt has been sent to your email.</p>';
-        document.getElementById('confirm-total').textContent = total ? '$' + total : '(see your email receipt)';
-        document.getElementById('zelle-amount').textContent  = total ? '$' + total : '';
-        document.getElementById('confirm-stripe-panel').classList.add('active');
-        confirmationSection.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    history.replaceState({}, document.title, window.location.pathname);
-}
+// Re-mount Stripe element when total changes (so PaymentIntent has right amount)
+document.querySelectorAll('.cs-quantity').forEach(function(input) {
+    input.addEventListener('change', function() {
+        const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
+        if (method === 'stripe') {
+            // Reset so it remounts with updated amount
+            stripeElements = null;
+            stripePaymentElement = null;
+            document.getElementById('stripe-payment-element').innerHTML = '';
+            mountStripeElement();
+        }
+    });
+});
 </script>
 
 {% endblock %}
