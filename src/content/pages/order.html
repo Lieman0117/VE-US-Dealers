@@ -790,8 +790,9 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
             }
 
             if (json.url || json.sessionId) {
-                // Save the entire form to sessionStorage before leaving the page
-                sessionStorage.setItem('veusOrderData', JSON.stringify({
+                // Save the entire form to localStorage before leaving the page
+                // (sessionStorage is cleared on cross-origin navigation from Stripe)
+                localStorage.setItem('veusOrderData', JSON.stringify({
                     'form-name':        'Order Form',
                     'order-date':       dateString,
                     'payment-method':   'stripe / credit card',
@@ -878,8 +879,8 @@ if (urlParams.get('payment') === 'success') {
     // Restore saved order data from before the Stripe redirect
     let savedOrder = {};
     try {
-        savedOrder = JSON.parse(sessionStorage.getItem('veusOrderData') || '{}');
-        sessionStorage.removeItem('veusOrderData');
+        savedOrder = JSON.parse(localStorage.getItem('veusOrderData') || '{}');
+        localStorage.removeItem('veusOrderData');
     } catch(e) {}
 
     // Merge in the session ID and confirmed paid status
