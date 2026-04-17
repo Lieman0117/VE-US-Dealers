@@ -6,7 +6,7 @@
 //    (or inside netlify/functions/: npm init -y && npm install stripe)
 // 3. In Netlify dashboard → Site settings → Environment variables, add:
 //    Key:   STRIPE_SECRET_KEY
-//    Value: sk_test_xxxxxxxxxxxxxxxxxxxx   (your test secret key)
+//    Value:    (your test secret key)
 // 4. Redeploy your site
 //
 // Verify the function is live by visiting:

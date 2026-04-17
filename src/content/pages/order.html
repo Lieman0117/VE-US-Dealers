@@ -789,15 +789,36 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 );
             }
 
-            if (json.url) {
-                // Preferred: redirect to Stripe-hosted checkout URL directly
-                window.location.href = json.url;
-            } else if (json.sessionId) {
-                // Fallback: use Stripe.js redirectToCheckout
-                const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-                const { error } = await stripe.redirectToCheckout({ sessionId: json.sessionId });
-                if (error) {
-                    throw new Error('Stripe.js error: ' + error.message);
+            if (json.url || json.sessionId) {
+                // Save the entire form to sessionStorage before leaving the page
+                sessionStorage.setItem('veusOrderData', JSON.stringify({
+                    'form-name':        'Order Form',
+                    'order-date':       dateString,
+                    'payment-method':   'stripe / credit card',
+                    'payment-status':   'paid',
+                    'quantity-48v':     document.getElementById('qty-48v').value,
+                    'quantity-36v':     document.getElementById('qty-36v').value,
+                    'quantity-12v':     document.getElementById('qty-12v').value,
+                    'product-48v-subtotal': document.getElementById('hidden-subtotal-48v').value,
+                    'product-36v-subtotal': document.getElementById('hidden-subtotal-36v').value,
+                    'product-12v-subtotal': document.getElementById('hidden-subtotal-12v').value,
+                    'total-amount':     document.getElementById('total-amount').value,
+                    'name':             customerInfo.name,
+                    'email':            customerInfo.email,
+                    'phone':            customerInfo.phone,
+                    'address1':         customerInfo.address1,
+                    'address2':         customerInfo.address2,
+                    'city':             customerInfo.city,
+                    'state':            customerInfo.state,
+                    'zip':              customerInfo.zip,
+                }));
+
+                if (json.url) {
+                    window.location.href = json.url;
+                } else {
+                    const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+                    const { error } = await stripe.redirectToCheckout({ sessionId: json.sessionId });
+                    if (error) throw new Error('Stripe.js error: ' + error.message);
                 }
             } else {
                 throw new Error(
@@ -852,27 +873,50 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
 //   should come from your Stripe webhook)
 // ─────────────────────────────────────────────
 if (urlParams.get('payment') === 'success') {
-    // Stripe redirected back — submit Netlify form entry so Make.com receives it as paid
     const stripeSessionId = urlParams.get('session_id') || '';
+
+    // Restore saved order data from before the Stripe redirect
+    let savedOrder = {};
+    try {
+        savedOrder = JSON.parse(sessionStorage.getItem('veusOrderData') || '{}');
+        sessionStorage.removeItem('veusOrderData');
+    } catch(e) {}
+
+    // Merge in the session ID and confirmed paid status
+    savedOrder['stripe-session'] = stripeSessionId;
+    savedOrder['payment-method'] = 'stripe / credit card';
+    savedOrder['payment-status'] = 'paid';
+    if (!savedOrder['form-name']) savedOrder['form-name'] = 'Order Form';
+    if (!savedOrder['order-date']) savedOrder['order-date'] = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+    // Submit the full order to Netlify so Make.com gets everything
     fetch('/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-            'form-name':       'Order Form',
-            'payment-method':  'stripe / credit card',
-            'payment-status':  'paid',
-            'stripe-session':  stripeSessionId,
-            'order-date':      new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }),
-        }).toString()
-    }).catch(function(e) { console.warn('Netlify paid-status form submission failed:', e); });
+        body: new URLSearchParams(savedOrder).toString()
+    }).catch(function(e) { console.warn('Netlify Stripe form submission failed:', e); });
+
+    // Build confirmation display from saved data
+    const qty48v = parseInt(savedOrder['quantity-48v']) || 0;
+    const qty36v = parseInt(savedOrder['quantity-36v']) || 0;
+    const qty12v = parseInt(savedOrder['quantity-12v']) || 0;
+    const total  = savedOrder['total-amount'] || '';
+
+    const orderLines = [];
+    if (qty48v > 0) orderLines.push('<p><strong>' + qty48v + 'x</strong> 48V 100Ah Golf Cart Battery @ $900 = <strong>$' + (qty48v * 900) + '</strong></p>');
+    if (qty36v > 0) orderLines.push('<p><strong>' + qty36v + 'x</strong> 36V 100Ah Golf Cart Battery @ $750 = <strong>$' + (qty36v * 750) + '</strong></p>');
+    if (qty12v > 0) orderLines.push('<p><strong>' + qty12v + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (qty12v * 495) + '</strong></p>');
 
     document.querySelectorAll('#cs-contact-549').forEach(function(s) { s.style.display = 'none'; });
 
     const confirmationSection = document.getElementById('cs-order-confirmation');
     if (confirmationSection) {
         confirmationSection.style.display = 'block';
-        document.getElementById('confirm-total').textContent = '(see your email receipt)';
-        document.getElementById('order-items').innerHTML = '<p>Your Stripe payment was completed. A receipt has been sent to your email.</p>';
+        document.getElementById('order-items').innerHTML = orderLines.length
+            ? orderLines.join('')
+            : '<p>Your Stripe payment was completed. A receipt has been sent to your email.</p>';
+        document.getElementById('confirm-total').textContent = total ? '$' + total : '(see your email receipt)';
+        document.getElementById('zelle-amount').textContent  = total ? '$' + total : '';
         document.getElementById('confirm-stripe-panel').classList.add('active');
         confirmationSection.scrollIntoView({ behavior: 'smooth' });
     }
