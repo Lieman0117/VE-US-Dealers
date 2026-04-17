@@ -267,6 +267,7 @@ permalink: "/order/"
             <input type="hidden" name="form-name" value="Order Form">
             <input type="hidden" name="order-date" id="order-date">
             <input type="hidden" name="payment-method" id="payment-method-hidden" value="stripe">
+            <input type="hidden" name="payment-status" id="payment-status-hidden" value="unpaid">
             <p style="display:none;">
                 <label>Don't fill this out if you're human: <input name="bot-field" /></label>
             </p>
@@ -592,6 +593,9 @@ const payMethodHidden = document.getElementById('payment-method-hidden');
 function updatePaymentUI() {
     const selectedMethod = document.querySelector('input[name="payment-method-radio"]:checked').value;
     payMethodHidden.value = selectedMethod;
+    // Status will be set accurately at submit time; default here for clarity
+    document.getElementById('payment-status-hidden').value =
+        selectedMethod === 'stripe' ? 'paid' : 'unpaid - pending zelle';
 
     if (selectedMethod === 'stripe') {
         submitBtn.textContent = 'Pay with Stripe & Submit Order';
@@ -745,7 +749,7 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                         lineItems,
                         customerInfo,
                         orderDate: dateString,
-                        successUrl: window.location.origin + '/order/?payment=success',
+                        successUrl: window.location.origin + '/order/?payment=success&session_id={CHECKOUT_SESSION_ID}',
                         cancelUrl:  window.location.origin + '/order/?cancelled=1',
                     })
                 });
@@ -825,7 +829,10 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
     }
 
     // ── ZELLE FLOW ───────────────────────────────
-    // Submit to Netlify Forms, then show confirmation
+    // Set fields explicitly so Netlify / Make.com receive them
+    document.getElementById('payment-method-hidden').value = 'zelle';
+    document.getElementById('payment-status-hidden').value = 'unpaid - pending zelle';
+
     try {
         await fetch('/', {
             method: 'POST',
@@ -845,8 +852,20 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
 //   should come from your Stripe webhook)
 // ─────────────────────────────────────────────
 if (urlParams.get('payment') === 'success') {
-    // Stripe redirected back with ?payment=success
-    // Show a generic success screen (no order details since we left the page)
+    // Stripe redirected back — submit Netlify form entry so Make.com receives it as paid
+    const stripeSessionId = urlParams.get('session_id') || '';
+    fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+            'form-name':       'Order Form',
+            'payment-method':  'stripe / credit card',
+            'payment-status':  'paid',
+            'stripe-session':  stripeSessionId,
+            'order-date':      new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }),
+        }).toString()
+    }).catch(function(e) { console.warn('Netlify paid-status form submission failed:', e); });
+
     document.querySelectorAll('#cs-contact-549').forEach(function(s) { s.style.display = 'none'; });
 
     const confirmationSection = document.getElementById('cs-order-confirmation');
