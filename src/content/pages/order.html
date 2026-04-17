@@ -637,7 +637,9 @@ function calculateTotals() {
     
     const subtotalElement = document.getElementById('order-subtotal');
     if (subtotalElement) subtotalElement.textContent = '$' + subtotal;
-    
+
+    const grandTotal = subtotal;
+
     const grandTotalElement = document.getElementById('grand-total');
     if (grandTotalElement) grandTotalElement.textContent = '$' + grandTotal;
     
