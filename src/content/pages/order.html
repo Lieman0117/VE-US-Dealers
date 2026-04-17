@@ -106,6 +106,14 @@ permalink: "/order/"
         .cs-submit {
             position: relative;
             transition: background 0.2s, opacity 0.2s;
+            /* Fixed dimensions — never shifts when text changes */
+            display: block;
+            width: 100%;
+            min-height: 52px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .cs-submit.stripe-mode {
             background: #635bff;
@@ -324,35 +332,16 @@ permalink: "/order/"
                 </div>
             </div>
 
-            <!-- Promo Code Section -->
-            <div class="cs-promo-section">
-                <h3>Have a Promo Code?</h3>
-                <div class="cs-promo-input-wrapper">
-                    <label class="cs-label cs-promo-label">
-                        Promo Code
-                        <input class="cs-input" type="text" id="promo-code" name="promo-code" placeholder="Enter promo code">
-                    </label>
-                    <button type="button" class="cs-promo-button" id="apply-promo">Apply</button>
-                </div>
-                <div id="promo-message" class="cs-promo-message"></div>
-            </div>
-
             <!-- Total -->
             <div class="cs-order-total">
                 <div class="cs-subtotal-line">
                     Subtotal: <span id="order-subtotal">$0</span>
-                </div>
-                <div id="discount-line" class="cs-discount-line" style="display: none;">
-                    Discount (FIRSTTIME10): <span id="discount-display">-$0</span>
                 </div>
                 <div class="cs-total-line">
                     <strong>Dealer Total: <span id="grand-total">$0</span></strong>
                 </div>
             </div>
             <input type="hidden" name="total-amount" id="total-amount">
-            <input type="hidden" name="subtotal-before-discount" id="subtotal-before-discount">
-            <input type="hidden" name="discount-amount-applied" id="discount-amount-applied">
-            <input type="hidden" name="promo-code-applied" id="promo-code-applied">
             <input type="hidden" name="product-48v-subtotal" id="hidden-subtotal-48v">
             <input type="hidden" name="product-36v-subtotal" id="hidden-subtotal-36v">
             <input type="hidden" name="product-12v-subtotal" id="hidden-subtotal-12v">
@@ -451,8 +440,11 @@ permalink: "/order/"
                     <p style="margin:0 0 6px 0;">
                         <strong>Zelle payment to:</strong> veusllc@gmail.com
                     </p>
-                    <p style="margin:0; font-size:0.85rem;">
+                    <p style="margin:0 0 8px 0; font-size:0.85rem;">
                         Your order will be <strong>held as unpaid</strong> until we confirm receipt of your Zelle transfer. We'll email you within 24 hours to confirm.
+                    </p>
+                    <p style="margin:0; font-size:0.85rem; border-top:1px solid #e8c840; padding-top:8px;">
+                        🏷️ <strong>Have a promo code?</strong> Email it to <strong>veusllc@gmail.com</strong> along with your Zelle payment and we'll apply the discount manually before confirming your order.
                     </p>
                 </div>
             </div>
@@ -564,7 +556,7 @@ permalink: "/order/"
 // ─────────────────────────────────────────────
 //  CONFIG — swap these for your real keys
 // ─────────────────────────────────────────────
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SejS2INaoLHhx8TLfd98rWVd58OMgTy2gC7gzAA5SJCRyLRJTPdSpsg02TFrw58IZhuMQhw1EvbWn1cBUEUj67900XbYXc90K'; // ← your test key
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'; // ← your test key
 // Your Netlify Function endpoint that creates a Stripe Checkout Session
 const CREATE_CHECKOUT_URL = '/.netlify/functions/create-checkout-session';
 
@@ -617,12 +609,6 @@ document.querySelectorAll('input[name="payment-method-radio"]').forEach(function
 });
 
 // ─────────────────────────────────────────────
-//  Promo code tracking
-// ─────────────────────────────────────────────
-let promoApplied = false;
-let discountPercent = 0;
-
-// ─────────────────────────────────────────────
 //  Calculate subtotals and grand total
 // ─────────────────────────────────────────────
 function calculateTotals() {
@@ -652,32 +638,6 @@ function calculateTotals() {
     const subtotalElement = document.getElementById('order-subtotal');
     if (subtotalElement) subtotalElement.textContent = '$' + subtotal;
     
-    const subtotalBeforeDiscountElement = document.getElementById('subtotal-before-discount');
-    if (subtotalBeforeDiscountElement) subtotalBeforeDiscountElement.value = subtotal;
-    
-    let discountAmount = 0;
-    let grandTotal = subtotal;
-    
-    if (promoApplied && discountPercent > 0) {
-        discountAmount = Math.round(subtotal * discountPercent);
-        grandTotal = subtotal - discountAmount;
-        
-        const discountLineElement = document.getElementById('discount-line');
-        if (discountLineElement) discountLineElement.style.display = 'block';
-        
-        const discountDisplayElement = document.getElementById('discount-display');
-        if (discountDisplayElement) discountDisplayElement.textContent = '-$' + discountAmount;
-        
-        const discountAmountAppliedElement = document.getElementById('discount-amount-applied');
-        if (discountAmountAppliedElement) discountAmountAppliedElement.value = discountAmount;
-    } else {
-        const discountLineElement = document.getElementById('discount-line');
-        if (discountLineElement) discountLineElement.style.display = 'none';
-        
-        const discountAmountAppliedElement = document.getElementById('discount-amount-applied');
-        if (discountAmountAppliedElement) discountAmountAppliedElement.value = 0;
-    }
-    
     const grandTotalElement = document.getElementById('grand-total');
     if (grandTotalElement) grandTotalElement.textContent = '$' + grandTotal;
     
@@ -687,48 +647,6 @@ function calculateTotals() {
 
 document.querySelectorAll('.cs-quantity').forEach(function(input) {
     input.addEventListener('input', calculateTotals);
-});
-
-// ─────────────────────────────────────────────
-//  Promo code
-// ─────────────────────────────────────────────
-document.getElementById('apply-promo').addEventListener('click', function() {
-    const promoInput = document.getElementById('promo-code');
-    const promoCode = promoInput.value.trim().toUpperCase();
-    const promoMessage = document.getElementById('promo-message');
-    
-    if (promoCode === 'FIRSTTIME10') {
-        if (promoApplied) {
-            promoMessage.textContent = 'Promo code already applied!';
-            promoMessage.className = 'cs-promo-message cs-promo-info';
-        } else {
-            promoApplied = true;
-            discountPercent = 0.10;
-            promoMessage.textContent = '✓ Promo code applied! 10% discount';
-            promoMessage.className = 'cs-promo-message cs-promo-success';
-            promoInput.disabled = true;
-            this.disabled = true;
-            this.textContent = 'Applied';
-            
-            const promoCodeAppliedElement = document.getElementById('promo-code-applied');
-            if (promoCodeAppliedElement) promoCodeAppliedElement.value = promoCode;
-            
-            calculateTotals();
-        }
-    } else if (promoCode === '') {
-        promoMessage.textContent = 'Please enter a promo code';
-        promoMessage.className = 'cs-promo-message cs-promo-error';
-    } else {
-        promoMessage.textContent = 'Invalid promo code';
-        promoMessage.className = 'cs-promo-message cs-promo-error';
-    }
-});
-
-document.getElementById('promo-code').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        document.getElementById('apply-promo').click();
-    }
 });
 
 // ─────────────────────────────────────────────
@@ -744,10 +662,6 @@ function buildOrderItemsHTML() {
     if (qty36v > 0) orderItemsHTML.push('<p><strong>' + qty36v + 'x</strong> 36V 100Ah Golf Cart Battery @ $750 = <strong>$' + (qty36v * 750) + '</strong></p>');
     if (qty12v > 0) orderItemsHTML.push('<p><strong>' + qty12v + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (qty12v * 495) + '</strong></p>');
     
-    if (promoApplied) {
-        const discountAmount = document.getElementById('discount-amount-applied').value;
-        orderItemsHTML.push('<p style="color:#28a745;"><strong>Discount (FIRSTTIME10):</strong> -$' + discountAmount + '</p>');
-    }
     return orderItemsHTML.join('');
 }
 
@@ -802,8 +716,6 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
         const qty48v = parseInt(document.getElementById('qty-48v').value) || 0;
         const qty36v = parseInt(document.getElementById('qty-36v').value) || 0;
         const qty12v = parseInt(document.getElementById('qty-12v').value) || 0;
-        const discountAmount = parseInt(document.getElementById('discount-amount-applied').value) || 0;
-
         const lineItems = [];
         if (qty48v > 0) lineItems.push({ name: '48V 100Ah LFP Golf Car Battery + Charger', qty: qty48v, unit_price: 900 });
         if (qty36v > 0) lineItems.push({ name: '36V 100Ah LFP Golf Car Battery + Charger', qty: qty36v, unit_price: 750 });
@@ -822,43 +734,90 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
 
         try {
             // Call your Netlify function to create a Checkout Session
-            const res = await fetch(CREATE_CHECKOUT_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    lineItems,
-                    discountAmount,
-                    promoCode: promoApplied ? document.getElementById('promo-code-applied').value : null,
-                    customerInfo,
-                    orderDate: dateString,
-                    // success and cancel URLs — Netlify function should use these or set its own
-                    successUrl: window.location.origin + '/order/?payment=success',
-                    cancelUrl:  window.location.origin + '/order/?cancelled=1',
-                })
-            });
+            let res;
+            try {
+                res = await fetch(CREATE_CHECKOUT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lineItems,
+                        customerInfo,
+                        orderDate: dateString,
+                        successUrl: window.location.origin + '/order/?payment=success',
+                        cancelUrl:  window.location.origin + '/order/?cancelled=1',
+                    })
+                });
+            } catch (networkErr) {
+                throw new Error(
+                    'Network error — could not reach the checkout function.\n' +
+                    'Is your Netlify function deployed?\n\n' +
+                    'URL tried: ' + CREATE_CHECKOUT_URL + '\n' +
+                    networkErr.message
+                );
+            }
 
-            const json = await res.json();
+            // Read raw text first so we can show it if JSON parse fails
+            const rawText = await res.text();
 
-            if (json.sessionId) {
-                // Redirect to Stripe Checkout
+            // Log for debugging
+            console.log('Checkout function response status:', res.status);
+            console.log('Checkout function raw response:', rawText);
+
+            if (!res.ok) {
+                // HTTP error (404, 500, etc.)
+                throw new Error(
+                    'Checkout function returned HTTP ' + res.status + '.\n\n' +
+                    (res.status === 404
+                        ? 'Function not found. Make sure netlify/functions/create-checkout-session.js is deployed and STRIPE_SECRET_KEY is set in Netlify environment variables.'
+                        : 'Response body: ' + rawText.substring(0, 300))
+                );
+            }
+
+            let json;
+            try {
+                json = JSON.parse(rawText);
+            } catch (parseErr) {
+                throw new Error(
+                    'Checkout function returned non-JSON (HTTP ' + res.status + ').\n\n' +
+                    'Raw response (first 300 chars):\n' + rawText.substring(0, 300)
+                );
+            }
+
+            if (json.url) {
+                // Preferred: redirect to Stripe-hosted checkout URL directly
+                window.location.href = json.url;
+            } else if (json.sessionId) {
+                // Fallback: use Stripe.js redirectToCheckout
                 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
                 const { error } = await stripe.redirectToCheckout({ sessionId: json.sessionId });
                 if (error) {
-                    document.getElementById('stripe-loading').classList.remove('active');
-                    submitBtn.disabled = false;
-                    alert('Stripe error: ' + error.message);
+                    throw new Error('Stripe.js error: ' + error.message);
                 }
-            } else if (json.url) {
-                // Some backends return a direct checkout URL
-                window.location.href = json.url;
             } else {
-                throw new Error(json.error || 'Unknown error from checkout function');
+                throw new Error(
+                    'Checkout function responded OK but returned no sessionId or url.\n\n' +
+                    'Response: ' + JSON.stringify(json)
+                );
             }
+
         } catch (err) {
             document.getElementById('stripe-loading').classList.remove('active');
             submitBtn.disabled = false;
-            alert('Could not start Stripe checkout. Please try again or choose Zelle.\n\n' + err.message);
-            console.error(err);
+            console.error('Stripe checkout error:', err);
+
+            // Show a detailed error panel instead of a plain alert
+            let errorNotice = document.getElementById('stripe-error-notice');
+            if (!errorNotice) {
+                errorNotice = document.createElement('div');
+                errorNotice.id = 'stripe-error-notice';
+                errorNotice.style.cssText = 'background:#fff0f0;border:1px solid #e00;border-radius:8px;padding:16px 18px;margin:12px 0;color:#a00;font-size:0.9rem;white-space:pre-wrap;word-break:break-word;';
+                submitBtn.parentNode.insertBefore(errorNotice, submitBtn);
+            }
+            errorNotice.style.display = 'block';
+            errorNotice.innerHTML =
+                '<strong>⚠️ Stripe checkout failed.</strong> Check the browser console (F12) for full details.<br><br>' +
+                '<code style="font-size:0.82rem;">' + err.message.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</code>' +
+                '<br><br><em>You can still place your order using Zelle by selecting that option above.</em>';
         }
         return;
     }
