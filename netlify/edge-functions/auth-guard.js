@@ -2,6 +2,11 @@ export default async (request, context) => {
   try {
     const url = new URL(request.url);
 
+    // Allow Netlify Functions to pass through without auth
+    if (url.pathname.startsWith("/.netlify/functions/")) {
+      return;
+    }
+
     const domain = Deno.env.get("AUTH0_DOMAIN");
     const clientId = Deno.env.get("AUTH0_CLIENT_ID");
     const redirectUri = Deno.env.get("AUTH0_REDIRECT_URI"); // <-- use env variable
