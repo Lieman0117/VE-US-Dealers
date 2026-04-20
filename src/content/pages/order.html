@@ -547,7 +547,7 @@ permalink: "/order/"
 // ─────────────────────────────────────────────
 //  CONFIG — swap these for your real keys
 // ─────────────────────────────────────────────
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SejS2INaoLHhx8TLfd98rWVd58OMgTy2gC7gzAA5SJCRyLRJTPdSpsg02TFrw58IZhuMQhw1EvbWn1cBUEUj67900XbYXc90K'; // ← your test publishable key
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'; // ← your test publishable key
 const CREATE_PAYMENT_INTENT_URL = '/.netlify/functions/create-payment-intent';
 
 // Init Stripe.js
@@ -579,7 +579,7 @@ const submitBtn = document.getElementById('submit-btn');
 const zellePanel = document.getElementById('zelle-info-panel');
 const payMethodHidden = document.getElementById('payment-method-hidden');
 
-async function updatePaymentUI() {
+function updatePaymentUI() {
     const selectedMethod = document.querySelector('input[name="payment-method-radio"]:checked').value;
     payMethodHidden.value = selectedMethod;
     document.getElementById('payment-status-hidden').value =
@@ -594,7 +594,7 @@ async function updatePaymentUI() {
         cardPanel.style.display = 'block';
         // Mount the Payment Element if not already mounted
         if (!stripeElements) {
-            await mountStripeElement();
+            mountStripeElement();
         }
     } else {
         submitBtn.textContent = 'Submit Zelle Order';
@@ -604,34 +604,15 @@ async function updatePaymentUI() {
     }
 }
 
-async function mountStripeElement() {
-    const grandTotal = parseInt(document.getElementById('total-amount').value) || 0;
-    if (grandTotal === 0) {
-        // No amount yet — mount a placeholder with $1 so it renders; we'll confirm with real amount at submit
-        // Actually just show the element — amount confirmed at submit time via PaymentIntent
-    }
+function mountStripeElement() {
+    // Mount card UI immediately — no server call needed until payment is confirmed at submit
+    // Uses Stripe Elements in "amount unknown" mode; PaymentIntent created at submit time
+    if (stripeElements) return; // already mounted
     try {
-        // Create a PaymentIntent on the server to get a clientSecret
-        const res = await fetch(CREATE_PAYMENT_INTENT_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: Math.max(grandTotal, 1) * 100 }) // cents; min $1 for Stripe
-        });
-        const rawText = await res.text();
-        let json;
-        try { json = JSON.parse(rawText); } catch(e) {
-            document.getElementById('stripe-card-errors').textContent = 'Could not load card form. ' + rawText.substring(0, 100);
-            return;
-        }
-        if (!json.clientSecret) {
-            document.getElementById('stripe-card-errors').textContent = json.error || 'Could not initialize card form.';
-            return;
-        }
-        stripeElements = stripe.elements({ clientSecret: json.clientSecret, appearance: { theme: 'stripe' } });
+        stripeElements = stripe.elements({ mode: 'payment', currency: 'usd', amount: 100, appearance: { theme: 'stripe' } });
         stripePaymentElement = stripeElements.create('payment');
         stripePaymentElement.mount('#stripe-payment-element');
-        // Store clientSecret for submit
-        document.getElementById('stripe-card-panel').dataset.clientSecret = json.clientSecret;
+        document.getElementById('stripe-card-errors').textContent = '';
     } catch(err) {
         document.getElementById('stripe-card-errors').textContent = 'Error loading card form: ' + err.message;
     }
@@ -745,7 +726,7 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
     // ── STRIPE FLOW ──────────────────────────────
     if (selectedMethod === 'stripe') {
         if (!stripeElements) {
-            alert('Card form is not loaded yet. Please wait a moment and try again.');
+            alert('Card form is not loaded yet. Please select the Stripe option again.');
             return;
         }
 
@@ -754,46 +735,74 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="stripe-processing"></span> Processing…';
 
-        // Confirm the payment using the embedded Payment Element
-        const clientSecret = document.getElementById('stripe-card-panel').dataset.clientSecret;
-        const { error, paymentIntent } = await stripe.confirmPayment({
-            elements: stripeElements,
-            confirmParams: { return_url: window.location.href }, // fallback only; handled below
-            redirect: 'if_required', // stay on page if no redirect needed (cards)
-        });
+        try {
+            // Step 1: Create PaymentIntent on server with the real total
+            const piRes = await fetch(CREATE_PAYMENT_INTENT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: grandTotal * 100 }) // dollars → cents
+            });
+            const piRaw = await piRes.text();
+            let piJson;
+            try { piJson = JSON.parse(piRaw); } catch(e) {
+                throw new Error('Server error: ' + piRaw.substring(0, 200));
+            }
+            if (!piJson.clientSecret) throw new Error(piJson.error || 'No client secret returned');
 
-        if (error) {
-            // Card declined, validation error, etc.
-            errorEl.textContent = error.message;
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Pay &amp; Submit Order';
-            return;
-        }
+            // Step 2: Confirm the card payment inline (no redirect)
+            const { error, paymentIntent } = await stripe.confirmPayment({
+                elements: stripeElements,
+                clientSecret: piJson.clientSecret,
+                confirmParams: {
+                    return_url: window.location.href, // only used as fallback for redirect-based methods
+                    payment_method_data: {
+                        billing_details: {
+                            name:  document.getElementById('name-order').value,
+                            email: document.getElementById('email-order').value,
+                            phone: document.getElementById('phone-order').value,
+                        }
+                    }
+                },
+                redirect: 'if_required', // cards never redirect — stays on page
+            });
 
-        if (paymentIntent && paymentIntent.status === 'succeeded') {
-            // Payment confirmed — now submit full order to Netlify
-            document.getElementById('payment-method-hidden').value = 'stripe / credit card';
-            document.getElementById('payment-status-hidden').value = 'paid';
-
-            const formData = new URLSearchParams(new FormData(document.getElementById('Order')));
-            formData.set('stripe-payment-intent', paymentIntent.id);
-
-            try {
-                await fetch('/', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formData.toString()
-                });
-            } catch(e) {
-                console.warn('Netlify form submit failed after payment:', e);
+            if (error) {
+                errorEl.textContent = error.message;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Pay &amp; Submit Order';
+                return;
             }
 
-            showConfirmation('stripe', grandTotal);
-        } else {
-            // Unexpected status
-            errorEl.textContent = 'Payment could not be confirmed. Status: ' + (paymentIntent ? paymentIntent.status : 'unknown');
+            if (paymentIntent && paymentIntent.status === 'succeeded') {
+                // Step 3: Submit full order form to Netlify with paid status
+                document.getElementById('payment-method-hidden').value = 'stripe / credit card';
+                document.getElementById('payment-status-hidden').value = 'paid';
+
+                const formData = new URLSearchParams(new FormData(document.getElementById('Order')));
+                formData.set('stripe-payment-intent', paymentIntent.id);
+
+                try {
+                    await fetch('/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: formData.toString()
+                    });
+                } catch(e) {
+                    console.warn('Netlify form submit after payment:', e);
+                }
+
+                showConfirmation('stripe', grandTotal);
+            } else {
+                errorEl.textContent = 'Payment status: ' + (paymentIntent ? paymentIntent.status : 'unknown') + '. Please try again.';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Pay &amp; Submit Order';
+            }
+
+        } catch(err) {
+            errorEl.textContent = err.message;
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'Pay &amp; Submit Order';
+            console.error('Stripe payment error:', err);
         }
         return;
     }
@@ -817,23 +826,16 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
 
 // Re-mount Stripe element when total changes (so PaymentIntent has right amount)
 document.querySelectorAll('.cs-quantity').forEach(function(input) {
-    input.addEventListener('change', async function() {
-        calculateTotals();
+    input.addEventListener('change', function() {
         const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
-        if (method === 'stripe' && stripeElements) {
-            // Reset and remount with updated amount
+        if (method === 'stripe') {
+            // Reset so it remounts with updated amount
             stripeElements = null;
             stripePaymentElement = null;
             document.getElementById('stripe-payment-element').innerHTML = '';
-            await mountStripeElement();
+            mountStripeElement();
         }
     });
-});
-
-// Mount Stripe element on page load if Stripe is selected
-document.addEventListener('DOMContentLoaded', async function() {
-    calculateTotals(); // Calculate initial totals
-    await updatePaymentUI(); // This will mount Stripe element if selected
 });
 </script>
 
