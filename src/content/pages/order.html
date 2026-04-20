@@ -596,6 +596,9 @@ document.querySelectorAll('input[name="payment-method-radio"]').forEach(function
     radio.addEventListener('change', updatePaymentUI);
 });
 
+// Run on page load so card panel shows immediately (Stripe is default selection)
+updatePaymentUI();
+
 // ─────────────────────────────────────────────
 //  Calculate subtotals and grand total
 // ─────────────────────────────────────────────
