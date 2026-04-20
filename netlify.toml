@@ -11,8 +11,7 @@ package = "netlify-plugin-cache"
     ".cache" # Remote Assets
   ]
 
-
 [[edge_functions]]
   path = "/*"
   function = "auth-guard"
-
+  excludedPath = "/.netlify/functions/*"
