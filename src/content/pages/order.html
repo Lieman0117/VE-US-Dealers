@@ -775,6 +775,9 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 redirect: 'if_required',
             });
 
+            // Log everything so we can see what Stripe returns
+            console.log('confirmPayment result — error:', error, '| paymentIntent:', paymentIntent);
+
             if (error) {
                 errorEl.textContent = error.message;
                 submitBtn.disabled = false;
@@ -782,13 +785,17 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 return;
             }
 
-            if (paymentIntent && paymentIntent.status === 'succeeded') {
-                // Step 3: Submit full order form to Netlify with paid status
+            // Accept 'succeeded' OR 'processing' (some payment methods settle async)
+            const successStatuses = ['succeeded', 'processing'];
+            if (paymentIntent && successStatuses.includes(paymentIntent.status)) {
+                // Submit full order form to Netlify with paid status
                 document.getElementById('payment-method-hidden').value = 'stripe / credit card';
-                document.getElementById('payment-status-hidden').value = 'paid';
+                document.getElementById('payment-status-hidden').value =
+                    paymentIntent.status === 'succeeded' ? 'paid' : 'processing';
 
                 const formData = new URLSearchParams(new FormData(document.getElementById('Order')));
                 formData.set('stripe-payment-intent', paymentIntent.id);
+                formData.set('stripe-payment-status', paymentIntent.status);
 
                 try {
                     await fetch('/', {
@@ -801,10 +808,19 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 }
 
                 showConfirmation('stripe', grandTotal);
-            } else {
-                errorEl.textContent = 'Payment status: ' + (paymentIntent ? paymentIntent.status : 'unknown') + '. Please try again.';
+
+            } else if (!paymentIntent && !error) {
+                // confirmPayment returned neither error nor paymentIntent — log it
+                errorEl.textContent = 'Unexpected response from Stripe. Check the browser console (F12) for details.';
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Pay &amp; Submit Order';
+                console.error('confirmPayment returned no error and no paymentIntent. Full result:', { error, paymentIntent });
+
+            } else {
+                errorEl.textContent = 'Payment status: ' + (paymentIntent ? paymentIntent.status : 'none') + '. Please try again or contact us.';
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Pay &amp; Submit Order';
+                console.error('Unexpected payment status:', paymentIntent);
             }
 
         } catch(err) {
