@@ -201,34 +201,8 @@ permalink: "/order/"
 
 {% block body %}
 
-<!-- Load the Auth0 SPA SDK -->
-<script src="https://cdn.auth0.com/js/auth0-spa-js/1.13/auth0-spa-js.production.js"></script>
 <!-- Load Stripe.js -->
 <script src="https://js.stripe.com/v3/"></script>
-
-<script>
-  let auth0 = null;
-
-  async function initAuth() {
-    auth0 = await createAuth0Client({
-      domain: "YOUR_AUTH0_DOMAIN",
-      client_id: "YOUR_CLIENT_ID"
-    });
-
-    const isAuthenticated = await auth0.isAuthenticated();
-
-    if (!isAuthenticated) {
-      try {
-        await auth0.loginWithPopup();
-        location.reload();
-      } catch (err) {
-        console.error("Popup closed or blocked:", err);
-      }
-    }
-  }
-
-  window.onload = initAuth;
-</script>
 
 <!-- ============================================ -->
 <!--                 Dealer Order Form            -->
