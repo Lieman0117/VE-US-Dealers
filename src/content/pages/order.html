@@ -736,7 +736,16 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
         submitBtn.innerHTML = '<span class="stripe-processing"></span> Processing…';
 
         try {
-            // Step 1: Create PaymentIntent on server with the real total
+            // Step 1: Call elements.submit() FIRST (required for deferred PaymentIntent flow)
+            const { error: submitError } = await stripeElements.submit();
+            if (submitError) {
+                errorEl.textContent = submitError.message;
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Pay &amp; Submit Order';
+                return;
+            }
+
+            // Step 2: Create PaymentIntent on server with the real total
             const piRes = await fetch(CREATE_PAYMENT_INTENT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -749,12 +758,12 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
             }
             if (!piJson.clientSecret) throw new Error(piJson.error || 'No client secret returned');
 
-            // Step 2: Confirm the card payment inline (no redirect)
+            // Step 3: Confirm the card payment inline (no redirect)
             const { error, paymentIntent } = await stripe.confirmPayment({
                 elements: stripeElements,
                 clientSecret: piJson.clientSecret,
                 confirmParams: {
-                    return_url: window.location.href, // only used as fallback for redirect-based methods
+                    return_url: window.location.href,
                     payment_method_data: {
                         billing_details: {
                             name:  document.getElementById('name-order').value,
@@ -763,7 +772,7 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                         }
                     }
                 },
-                redirect: 'if_required', // cards never redirect — stays on page
+                redirect: 'if_required',
             });
 
             if (error) {
