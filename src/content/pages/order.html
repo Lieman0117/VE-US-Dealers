@@ -13,25 +13,23 @@ permalink: "/order/"
         .cs-payment-method {
             background: #f8f9fa;
             border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 24px 28px;
-            margin: 24px 0;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0 0 0;
         }
         .cs-payment-method h3 {
-            margin: 0 0 18px 0;
+            margin: 0 0 16px 0;
             font-size: 1.05rem;
             font-weight: 700;
             color: #1a1a1a;
             letter-spacing: 0.02em;
         }
         .cs-payment-options {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
         .cs-payment-option {
-            flex: 1;
-            min-width: 160px;
             position: relative;
         }
         .cs-payment-option input[type="radio"] {
@@ -42,16 +40,18 @@ permalink: "/order/"
         }
         .cs-payment-card {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
-            gap: 10px;
-            padding: 18px 14px;
+            gap: 12px;
+            padding: 14px 16px;
             border: 2px solid #ddd;
             border-radius: 10px;
             cursor: pointer;
             background: #fff;
             transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
             user-select: none;
+            height: 100%;
+            box-sizing: border-box;
         }
         .cs-payment-option input[type="radio"]:checked + .cs-payment-card {
             border-color: #b8860b;
@@ -63,8 +63,9 @@ permalink: "/order/"
             background: #fffdf4;
         }
         .cs-payment-card .cs-pay-icon {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -73,40 +74,102 @@ permalink: "/order/"
             width: 100%;
             height: 100%;
         }
+        .cs-payment-card .cs-pay-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
         .cs-payment-card .cs-pay-name {
             font-weight: 700;
-            font-size: 0.97rem;
+            font-size: 0.92rem;
             color: #1a1a1a;
+            line-height: 1.2;
         }
         .cs-payment-card .cs-pay-desc {
-            font-size: 0.78rem;
-            color: #666;
-            text-align: center;
-            line-height: 1.35;
+            font-size: 0.75rem;
+            color: #888;
+            line-height: 1.3;
         }
         .cs-payment-option input[type="radio"]:checked + .cs-payment-card .cs-pay-name {
             color: #b8860b;
         }
 
-        /* ── Zelle info panel (shown when Zelle selected) ── */
-        #zelle-info-panel {
+        /* ── Shared panel style for both Stripe and Zelle details ── */
+        .cs-pay-detail-panel {
             display: none;
-            background: #fffbea;
-            border: 1px solid #f0c040;
-            border-radius: 8px;
-            padding: 16px 20px;
+            border-radius: 10px;
+            padding: 20px 22px;
             margin-top: 14px;
             font-size: 0.9rem;
-            color: #5a4500;
             line-height: 1.6;
+            border: 1.5px solid #e0e0e0;
+            background: #fff;
+        }
+        .cs-pay-detail-panel .cs-panel-title {
+            font-weight: 700;
+            font-size: 0.88rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin: 0 0 14px 0;
+            padding-bottom: 10px;
+            border-bottom: 1.5px solid #f0f0f0;
+            color: #444;
+        }
+
+        /* Stripe panel specifics */
+        #stripe-card-panel {
+            border-color: #635bff;
+            background: #fafafe;
+        }
+        #stripe-card-panel .cs-panel-title {
+            color: #635bff;
+            border-bottom-color: #e8e6ff;
+        }
+        #stripe-payment-element {
+            margin-bottom: 4px;
+        }
+        #stripe-card-errors {
+            color: #c0392b;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            min-height: 18px;
+            font-weight: 500;
+        }
+
+        /* Zelle panel specifics */
+        #zelle-info-panel {
+            border-color: #f0c040;
+            background: #fffdf0;
+            color: #5a4500;
+        }
+        #zelle-info-panel .cs-panel-title {
+            color: #7a5a00;
+            border-bottom-color: #f5e070;
         }
         #zelle-info-panel strong { color: #3d2f00; }
+        .cs-zelle-address {
+            display: inline-block;
+            background: #fff8d6;
+            border: 1px solid #e8c840;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 700;
+            color: #3d2f00;
+            margin: 4px 0 10px 0;
+            font-size: 0.95rem;
+        }
+        .cs-zelle-note {
+            font-size: 0.82rem;
+            color: #7a6020;
+            border-top: 1px solid #f0d840;
+            padding-top: 10px;
+            margin-top: 4px;
+        }
 
-        /* ── Submit button states ── */
+        /* ── Submit button ── */
         .cs-submit {
             position: relative;
             transition: background 0.2s, opacity 0.2s;
-            /* Fixed dimensions — never shifts when text changes */
             display: block;
             width: 100%;
             min-height: 52px;
@@ -114,6 +177,7 @@ permalink: "/order/"
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-top: 20px;
         }
         .cs-submit.stripe-mode {
             background: #635bff;
@@ -124,31 +188,6 @@ permalink: "/order/"
         .cs-submit:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-        }
-
-        /* ── Stripe Embedded Card Element ── */
-        #stripe-card-panel {
-            display: none;
-            background: #f8f9ff;
-            border: 2px solid #635bff;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 16px 0;
-        }
-        #stripe-card-panel h4 {
-            margin: 0 0 14px 0;
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: #635bff;
-        }
-        #stripe-payment-element {
-            margin-bottom: 6px;
-        }
-        #stripe-card-errors {
-            color: #e00;
-            font-size: 0.85rem;
-            margin-top: 8px;
-            min-height: 20px;
         }
         .stripe-processing {
             display: inline-block;
@@ -362,7 +401,6 @@ permalink: "/order/"
                         <input type="radio" name="payment-method-radio" id="pay-stripe" value="stripe" checked>
                         <div class="cs-payment-card">
                             <div class="cs-pay-icon">
-                                <!-- Stripe card icon -->
                                 <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <rect x="2" y="8" width="40" height="28" rx="5" fill="#635bff"/>
                                     <rect x="2" y="16" width="40" height="7" fill="#4b44d4"/>
@@ -370,8 +408,10 @@ permalink: "/order/"
                                     <rect x="17" y="26" width="5" height="4" rx="1" fill="rgba(255,255,255,0.4)"/>
                                 </svg>
                             </div>
-                            <span class="cs-pay-name">Pay with Card</span>
-                            <span class="cs-pay-desc">Stripe secure checkout<br>Card or ACH</span>
+                            <div class="cs-pay-text">
+                                <span class="cs-pay-name">Credit / Debit Card</span>
+                                <span class="cs-pay-desc">Secure Stripe checkout</span>
+                            </div>
                         </div>
                     </label>
 
@@ -380,37 +420,38 @@ permalink: "/order/"
                         <input type="radio" name="payment-method-radio" id="pay-zelle" value="zelle">
                         <div class="cs-payment-card">
                             <div class="cs-pay-icon">
-                                <!-- Zelle Z icon -->
                                 <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="22" cy="22" r="20" fill="#6d1ed4"/>
                                     <text x="22" y="29" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" fill="white">Z</text>
                                 </svg>
                             </div>
-                            <span class="cs-pay-name">Pay with Zelle</span>
-                            <span class="cs-pay-desc">Bank-to-bank transfer<br>Confirm manually</span>
+                            <div class="cs-pay-text">
+                                <span class="cs-pay-name">Pay with Zelle</span>
+                                <span class="cs-pay-desc">Bank transfer, no fees</span>
+                            </div>
                         </div>
                     </label>
 
                 </div>
 
                 <!-- Zelle info panel -->
-                <div id="zelle-info-panel">
-                    <p style="margin:0 0 6px 0;">
-                        <strong>Zelle payment to:</strong> veusllc@gmail.com
+                <div id="zelle-info-panel" class="cs-pay-detail-panel">
+                    <p class="cs-panel-title">Zelle Payment Instructions</p>
+                    <p style="margin:0 0 4px 0;">Send payment to:</p>
+                    <span class="cs-zelle-address">veusllc@gmail.com</span>
+                    <p style="margin:0 0 0 0; font-size:0.87rem; color:#5a4500;">
+                        Your order will be <strong>held as unpaid</strong> until we confirm your Zelle transfer. We'll email you within 24 hours.
                     </p>
-                    <p style="margin:0 0 8px 0; font-size:0.85rem;">
-                        Your order will be <strong>held as unpaid</strong> until we confirm receipt of your Zelle transfer. We'll email you within 24 hours to confirm.
-                    </p>
-                    <p style="margin:0; font-size:0.85rem; border-top:1px solid #e8c840; padding-top:8px;">
-                        🏷️ <strong>Have a promo code?</strong> Email it to <strong>veusllc@gmail.com</strong> along with your Zelle payment and we'll apply the discount manually before confirming your order.
+                    <p class="cs-zelle-note">
+                        🏷️ <strong>Have a promo code?</strong> Include it in your Zelle payment note or email <strong>veusllc@gmail.com</strong> and we'll apply it manually.
                     </p>
                 </div>
             </div>
             <!-- END payment method -->
 
             <!-- Stripe embedded card element — shown when Stripe selected -->
-            <div id="stripe-card-panel">
-                <h4>💳 Enter Card Details</h4>
+            <div id="stripe-card-panel" class="cs-pay-detail-panel">
+                <p class="cs-panel-title">Enter Card Details</p>
                 <div id="stripe-payment-element"></div>
                 <div id="stripe-card-errors"></div>
             </div>
