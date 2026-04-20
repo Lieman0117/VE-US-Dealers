@@ -11,10 +11,10 @@ permalink: "/order/"
     <style>
         /* ── Payment Method Selector ── */
         .cs-payment-method {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 24px;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0;
             margin: 24px 0 0 0;
         }
         .cs-payment-method h3 {
@@ -97,36 +97,73 @@ permalink: "/order/"
         /* ── Shared panel style for both Stripe and Zelle details ── */
         .cs-pay-detail-panel {
             display: none;
-            border-radius: 10px;
-            padding: 20px 22px;
-            margin-top: 14px;
+            border-radius: 0 0 10px 10px;
+            padding: 22px;
+            margin-top: 0;
             font-size: 0.9rem;
             line-height: 1.6;
             border: 1.5px solid #e0e0e0;
+            border-top: none;
             background: #fff;
+            width: 100%;
+            box-sizing: border-box;
         }
         .cs-pay-detail-panel .cs-panel-title {
             font-weight: 700;
-            font-size: 0.88rem;
-            letter-spacing: 0.04em;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
-            margin: 0 0 14px 0;
-            padding-bottom: 10px;
+            margin: 0 0 16px 0;
+            padding-bottom: 12px;
             border-bottom: 1.5px solid #f0f0f0;
-            color: #444;
+            color: #666;
+        }
+
+        /* Wrapper so toggles + panel form one visual unit */
+        .cs-payment-options-wrapper {
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .cs-payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            border-bottom: 1.5px solid #e0e0e0;
+        }
+        .cs-payment-option:first-child .cs-payment-card {
+            border-right: 1.5px solid #e0e0e0;
+            border-radius: 0;
+            border-top: none;
+            border-left: none;
+            border-bottom: none;
+        }
+        .cs-payment-option:last-child .cs-payment-card {
+            border-radius: 0;
+            border: none;
+        }
+        .cs-payment-card {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+        }
+        .cs-payment-option input[type="radio"]:checked + .cs-payment-card {
+            background: #fffdf4 !important;
+            box-shadow: none !important;
         }
 
         /* Stripe panel specifics */
         #stripe-card-panel {
-            border-color: #635bff;
+            border-color: #e0e0e0;
             background: #fafafe;
         }
         #stripe-card-panel .cs-panel-title {
             color: #635bff;
-            border-bottom-color: #e8e6ff;
+            border-bottom-color: #ece9ff;
         }
         #stripe-payment-element {
-            margin-bottom: 4px;
+            min-height: 200px;
         }
         #stripe-card-errors {
             color: #c0392b;
@@ -138,7 +175,6 @@ permalink: "/order/"
 
         /* Zelle panel specifics */
         #zelle-info-panel {
-            border-color: #f0c040;
             background: #fffdf0;
             color: #5a4500;
         }
@@ -152,10 +188,10 @@ permalink: "/order/"
             background: #fff8d6;
             border: 1px solid #e8c840;
             border-radius: 6px;
-            padding: 6px 12px;
+            padding: 6px 14px;
             font-weight: 700;
             color: #3d2f00;
-            margin: 4px 0 10px 0;
+            margin: 4px 0 12px 0;
             font-size: 0.95rem;
         }
         .cs-zelle-note {
@@ -163,7 +199,7 @@ permalink: "/order/"
             color: #7a6020;
             border-top: 1px solid #f0d840;
             padding-top: 10px;
-            margin-top: 4px;
+            margin-top: 8px;
         }
 
         /* ── Submit button ── */
@@ -394,6 +430,7 @@ permalink: "/order/"
             <!-- ── Payment Method Selection ── -->
             <div class="cs-payment-method">
                 <h3>Select Payment Method</h3>
+                <div class="cs-payment-options-wrapper">
                 <div class="cs-payment-options">
 
                     <!-- Stripe Option -->
@@ -433,6 +470,7 @@ permalink: "/order/"
                     </label>
 
                 </div>
+                </div><!-- end wrapper -->
 
                 <!-- Zelle info panel -->
                 <div id="zelle-info-panel" class="cs-pay-detail-panel">
@@ -445,16 +483,16 @@ permalink: "/order/"
                     <p class="cs-zelle-note">
                         🏷️ <strong>Have a promo code?</strong> Include it in your Zelle payment note or email <strong>veusllc@gmail.com</strong> and we'll apply it manually.
                     </p>
+                <!-- Stripe card panel -->
+                <div id="stripe-card-panel" class="cs-pay-detail-panel">
+                    <p class="cs-panel-title">Enter Card Details</p>
+                    <div id="stripe-payment-element"></div>
+                    <div id="stripe-card-errors"></div>
+                </div>
+
                 </div>
             </div>
             <!-- END payment method -->
-
-            <!-- Stripe embedded card element — shown when Stripe selected -->
-            <div id="stripe-card-panel" class="cs-pay-detail-panel">
-                <p class="cs-panel-title">Enter Card Details</p>
-                <div id="stripe-payment-element"></div>
-                <div id="stripe-card-errors"></div>
-            </div>
 
             <button class="cs-submit stripe-mode" type="submit" id="submit-btn">
                 Pay with Stripe &amp; Submit Order
