@@ -24,22 +24,13 @@ exports.handler = async function(event) {
     console.log('Validating promo code:', normalized);
 
     try {
-        // Search without active filter first so we can give a better error message
+        // List promotion codes matching this code string
         const promoCodes = await stripe.promotionCodes.list({
-            expand: ['data.coupon'],
-            code:  normalized,
+            code: normalized,
             limit: 5,
         });
 
-        console.log('Promo codes found:', promoCodes.data.length, JSON.stringify(promoCodes.data.map(p => ({
-            id: p.id,
-            code: p.code,
-            active: p.active,
-            coupon: p.coupon?.id,
-            coupon_valid: p.coupon?.valid,
-            percent_off: p.coupon?.percent_off,
-            amount_off: p.coupon?.amount_off,
-        }))));
+        console.log('Raw promo codes result:', JSON.stringify(promoCodes.data));
 
         if (!promoCodes.data.length) {
             return {
@@ -49,24 +40,28 @@ exports.handler = async function(event) {
             };
         }
 
-        // Find an active one
         const promoCode = promoCodes.data.find(p => p.active) || promoCodes.data[0];
+        console.log('Selected promo code:', JSON.stringify(promoCode));
 
         if (!promoCode.active) {
             return {
                 statusCode: 200,
                 headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'This promo code has expired or is inactive.' }),
+                body: JSON.stringify({ valid: false, message: 'This promo code has expired.' }),
             };
         }
 
-        const coupon = promoCode.coupon;
+        // Fetch the coupon separately to guarantee we have the full object
+        const coupon = await stripe.coupons.retrieve(
+            typeof promoCode.coupon === 'string' ? promoCode.coupon : promoCode.coupon.id
+        );
+        console.log('Coupon:', JSON.stringify(coupon));
 
-        if (!coupon.valid) {
+        if (!coupon || !coupon.valid) {
             return {
                 statusCode: 200,
                 headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'The coupon attached to this code is no longer valid.' }),
+                body: JSON.stringify({ valid: false, message: 'This coupon is no longer valid.' }),
             };
         }
 
