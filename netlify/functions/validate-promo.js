@@ -1,4 +1,9 @@
 // netlify/functions/validate-promo.js
+//
+// Looks up a Stripe coupon directly by ID (the code string IS the coupon ID in Stripe).
+// In Stripe dashboard, when you create a coupon with "Use customer-facing coupon codes"
+// checked, the CODE you enter becomes searchable as a promotion code.
+// This function tries BOTH approaches: promotion code lookup AND direct coupon lookup.
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -8,6 +13,28 @@ const CORS = {
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json',
 };
+
+function successResponse(coupon, promoId) {
+    if (coupon.percent_off) {
+        return {
+            valid:           true,
+            discountPercent: coupon.percent_off / 100,
+            amountOff:       0,
+            promoId:         promoId || coupon.id,
+            message:         coupon.percent_off + '% discount applied!',
+        };
+    }
+    if (coupon.amount_off) {
+        return {
+            valid:           true,
+            discountPercent: 0,
+            amountOff:       coupon.amount_off / 100,
+            promoId:         promoId || coupon.id,
+            message:         '$' + (coupon.amount_off / 100).toFixed(2) + ' discount applied!',
+        };
+    }
+    return { valid: false, message: 'Unsupported coupon type.' };
+}
 
 exports.handler = async function(event) {
     if (event.httpMethod === 'OPTIONS') return { statusCode: 200, headers: CORS, body: '' };
@@ -21,104 +48,83 @@ exports.handler = async function(event) {
     if (!code) return { statusCode: 400, headers: CORS, body: JSON.stringify({ valid: false, message: 'No code provided' }) };
 
     const normalized = code.trim().toUpperCase();
-    console.log('Validating promo code:', normalized);
+    console.log('Validating:', normalized);
 
+    // ── Approach 1: Direct coupon lookup by ID ──────────────────────────
+    // When you create a coupon in Stripe, the coupon ID can be the code itself
     try {
-        // List promotion codes matching this code string
-        const promoCodes = await stripe.promotionCodes.list({
-            code: normalized,
-            limit: 5,
-        });
-
-        console.log('Raw promo codes result:', JSON.stringify(promoCodes.data));
-
-        if (!promoCodes.data.length) {
+        const coupon = await stripe.coupons.retrieve(normalized);
+        console.log('Direct coupon lookup succeeded:', JSON.stringify(coupon));
+        if (coupon && coupon.valid) {
             return {
                 statusCode: 200,
                 headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'Promo code not found.' }),
+                body: JSON.stringify(successResponse(coupon, null)),
             };
         }
-
-        const promoCode = promoCodes.data.find(p => p.active) || promoCodes.data[0];
-        console.log('Selected promo code keys:', Object.keys(promoCode));
-        console.log('promoCode.coupon raw:', JSON.stringify(promoCode.coupon));
-        console.log('promoCode.coupon_id:', promoCode.coupon_id);
-        console.log('Full promoCode:', JSON.stringify(promoCode));
-
-        if (!promoCode.active) {
-            return {
-                statusCode: 200,
-                headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'This promo code has expired.' }),
-            };
-        }
-
-        // Get coupon ID — handle all possible shapes Stripe might return
-        const couponRef = promoCode.coupon || promoCode.coupon_id;
-        if (!couponRef) {
-            console.error('No coupon reference found on promo code. Full object:', JSON.stringify(promoCode));
-            return {
-                statusCode: 200,
-                headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'Promo code has no coupon attached. Check Stripe dashboard.' }),
-            };
-        }
-        const couponId = typeof couponRef === 'string' ? couponRef : couponRef.id;
-        console.log('Fetching coupon ID:', couponId);
-
-        // Fetch the coupon separately to guarantee we have the full object
-        const coupon = await stripe.coupons.retrieve(couponId);
-        console.log('Coupon:', JSON.stringify(coupon));
-
-        if (!coupon || !coupon.valid) {
-            return {
-                statusCode: 200,
-                headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'This coupon is no longer valid.' }),
-            };
-        }
-
-        if (coupon.percent_off) {
-            return {
-                statusCode: 200,
-                headers: CORS,
-                body: JSON.stringify({
-                    valid:           true,
-                    discountPercent: coupon.percent_off / 100,
-                    amountOff:       0,
-                    promoId:         promoCode.id,
-                    message:         coupon.percent_off + '% discount applied!',
-                }),
-            };
-        }
-
-        if (coupon.amount_off) {
-            return {
-                statusCode: 200,
-                headers: CORS,
-                body: JSON.stringify({
-                    valid:           true,
-                    discountPercent: 0,
-                    amountOff:       coupon.amount_off / 100,
-                    promoId:         promoCode.id,
-                    message:         '$' + (coupon.amount_off / 100).toFixed(2) + ' discount applied!',
-                }),
-            };
-        }
-
-        return {
-            statusCode: 200,
-            headers: CORS,
-            body: JSON.stringify({ valid: false, message: 'Unsupported coupon type.' }),
-        };
-
-    } catch (err) {
-        console.error('Stripe promo error:', err.message);
-        return {
-            statusCode: 500,
-            headers: CORS,
-            body: JSON.stringify({ valid: false, message: 'Error: ' + err.message }),
-        };
+    } catch(e) {
+        console.log('Direct coupon lookup failed (expected if using promo codes):', e.message);
     }
+
+    // ── Approach 2: Promotion code lookup ──────────────────────────────
+    try {
+        const list = await stripe.promotionCodes.list({ code: normalized, limit: 10 });
+        console.log('Promo code list count:', list.data.length);
+
+        for (const promo of list.data) {
+            console.log('Promo:', promo.id, 'active:', promo.active, 'coupon:', JSON.stringify(promo.coupon));
+            if (!promo.active) continue;
+
+            // coupon may be a string ID or object depending on Stripe version
+            let coupon;
+            if (typeof promo.coupon === 'object' && promo.coupon !== null) {
+                coupon = promo.coupon;
+            } else if (typeof promo.coupon === 'string') {
+                coupon = await stripe.coupons.retrieve(promo.coupon);
+            } else {
+                // Last resort — list all coupons and match by name
+                console.log('No coupon reference, skipping promo:', promo.id);
+                continue;
+            }
+
+            if (coupon && coupon.valid) {
+                return {
+                    statusCode: 200,
+                    headers: CORS,
+                    body: JSON.stringify(successResponse(coupon, promo.id)),
+                };
+            }
+        }
+    } catch(e) {
+        console.error('Promo code list error:', e.message);
+    }
+
+    // ── Approach 3: List all coupons and match by name ─────────────────
+    // Fallback: match the code against coupon names (e.g. "FIRSTTIME10")
+    try {
+        const coupons = await stripe.coupons.list({ limit: 100 });
+        console.log('Scanning', coupons.data.length, 'coupons for name match');
+        const match = coupons.data.find(c =>
+            c.valid && (
+                (c.name  && c.name.toUpperCase()  === normalized) ||
+                (c.id    && c.id.toUpperCase()    === normalized)
+            )
+        );
+        if (match) {
+            console.log('Matched by name/id:', match.id);
+            return {
+                statusCode: 200,
+                headers: CORS,
+                body: JSON.stringify(successResponse(match, null)),
+            };
+        }
+    } catch(e) {
+        console.error('Coupon list scan error:', e.message);
+    }
+
+    return {
+        statusCode: 200,
+        headers: CORS,
+        body: JSON.stringify({ valid: false, message: 'Invalid or expired promo code.' }),
+    };
 };
