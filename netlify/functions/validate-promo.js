@@ -41,7 +41,10 @@ exports.handler = async function(event) {
         }
 
         const promoCode = promoCodes.data.find(p => p.active) || promoCodes.data[0];
-        console.log('Selected promo code:', JSON.stringify(promoCode));
+        console.log('Selected promo code keys:', Object.keys(promoCode));
+        console.log('promoCode.coupon raw:', JSON.stringify(promoCode.coupon));
+        console.log('promoCode.coupon_id:', promoCode.coupon_id);
+        console.log('Full promoCode:', JSON.stringify(promoCode));
 
         if (!promoCode.active) {
             return {
@@ -51,10 +54,21 @@ exports.handler = async function(event) {
             };
         }
 
+        // Get coupon ID — handle all possible shapes Stripe might return
+        const couponRef = promoCode.coupon || promoCode.coupon_id;
+        if (!couponRef) {
+            console.error('No coupon reference found on promo code. Full object:', JSON.stringify(promoCode));
+            return {
+                statusCode: 200,
+                headers: CORS,
+                body: JSON.stringify({ valid: false, message: 'Promo code has no coupon attached. Check Stripe dashboard.' }),
+            };
+        }
+        const couponId = typeof couponRef === 'string' ? couponRef : couponRef.id;
+        console.log('Fetching coupon ID:', couponId);
+
         // Fetch the coupon separately to guarantee we have the full object
-        const coupon = await stripe.coupons.retrieve(
-            typeof promoCode.coupon === 'string' ? promoCode.coupon : promoCode.coupon.id
-        );
+        const coupon = await stripe.coupons.retrieve(couponId);
         console.log('Coupon:', JSON.stringify(coupon));
 
         if (!coupon || !coupon.valid) {
