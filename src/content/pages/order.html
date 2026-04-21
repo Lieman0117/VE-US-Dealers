@@ -28,6 +28,22 @@ permalink: "/order/"
             background: #fff;
         }
 
+        /* Force payment section to full container width,
+           breaking out of any narrow cs-form input column */
+        .cs-payment-method {
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+            align-self: stretch;
+        }
+        .cs-payment-block {
+            width: 100% !important;
+        }
+        /* Make submit button match payment block width */
+        #submit-btn {
+            max-width: 100% !important;
+        }
+
         /* Toggle row */
         .cs-payment-options {
             display: grid;
@@ -463,7 +479,7 @@ permalink: "/order/"
             </label>
 
             <!-- ── Payment Method Selection ── -->
-            <div class="cs-payment-method">
+            <div class="cs-payment-method" style="width:100%;max-width:100%;box-sizing:border-box;">
                 <h3>Select Payment Method</h3>
 
                 <div class="cs-payment-block">
