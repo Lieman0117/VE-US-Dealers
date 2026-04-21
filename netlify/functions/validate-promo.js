@@ -1,9 +1,4 @@
 // netlify/functions/validate-promo.js
-//
-// Validates a Stripe promotion code against the Stripe API.
-// Create promo codes in: Stripe Dashboard → Products → Coupons → Promotion codes
-//
-// Returns: { valid, discountPercent, message }
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -25,31 +20,52 @@ exports.handler = async function(event) {
     const { code } = body;
     if (!code) return { statusCode: 400, headers: CORS, body: JSON.stringify({ valid: false, message: 'No code provided' }) };
 
+    const normalized = code.trim().toUpperCase();
+    console.log('Validating promo code:', normalized);
+
     try {
-        // Look up the promotion code in Stripe
+        // Search without active filter first so we can give a better error message
         const promoCodes = await stripe.promotionCodes.list({
-            code: code.trim().toUpperCase(),
-            active: true,
-            limit: 1,
+            code:  normalized,
+            limit: 5,
         });
+
+        console.log('Promo codes found:', promoCodes.data.length, JSON.stringify(promoCodes.data.map(p => ({
+            id: p.id,
+            code: p.code,
+            active: p.active,
+            coupon: p.coupon?.id,
+            coupon_valid: p.coupon?.valid,
+            percent_off: p.coupon?.percent_off,
+            amount_off: p.coupon?.amount_off,
+        }))));
 
         if (!promoCodes.data.length) {
             return {
                 statusCode: 200,
                 headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'Invalid or expired promo code.' }),
+                body: JSON.stringify({ valid: false, message: 'Promo code not found.' }),
             };
         }
 
-        const promoCode = promoCodes.data[0];
-        const coupon    = promoCode.coupon;
+        // Find an active one
+        const promoCode = promoCodes.data.find(p => p.active) || promoCodes.data[0];
 
-        // Only support percent_off coupons for now
+        if (!promoCode.active) {
+            return {
+                statusCode: 200,
+                headers: CORS,
+                body: JSON.stringify({ valid: false, message: 'This promo code has expired or is inactive.' }),
+            };
+        }
+
+        const coupon = promoCode.coupon;
+
         if (!coupon.valid) {
             return {
                 statusCode: 200,
                 headers: CORS,
-                body: JSON.stringify({ valid: false, message: 'This promo code is no longer valid.' }),
+                body: JSON.stringify({ valid: false, message: 'The coupon attached to this code is no longer valid.' }),
             };
         }
 
@@ -59,22 +75,22 @@ exports.handler = async function(event) {
                 headers: CORS,
                 body: JSON.stringify({
                     valid:           true,
-                    discountPercent: coupon.percent_off / 100,   // e.g. 0.10 for 10%
-                    promoId:         promoCode.id,                // used when creating PaymentIntent
+                    discountPercent: coupon.percent_off / 100,
+                    amountOff:       0,
+                    promoId:         promoCode.id,
                     message:         coupon.percent_off + '% discount applied!',
                 }),
             };
         }
 
         if (coupon.amount_off) {
-            // Fixed amount discount — return as a flat dollar amount
             return {
                 statusCode: 200,
                 headers: CORS,
                 body: JSON.stringify({
                     valid:           true,
                     discountPercent: 0,
-                    amountOff:       coupon.amount_off / 100,     // cents → dollars
+                    amountOff:       coupon.amount_off / 100,
                     promoId:         promoCode.id,
                     message:         '$' + (coupon.amount_off / 100).toFixed(2) + ' discount applied!',
                 }),
@@ -88,11 +104,11 @@ exports.handler = async function(event) {
         };
 
     } catch (err) {
-        console.error('Stripe promo validation error:', err.message);
+        console.error('Stripe promo error:', err.message);
         return {
             statusCode: 500,
             headers: CORS,
-            body: JSON.stringify({ valid: false, message: 'Could not validate code. Please try again.' }),
+            body: JSON.stringify({ valid: false, message: 'Error: ' + err.message }),
         };
     }
 };
