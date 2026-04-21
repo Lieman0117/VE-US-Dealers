@@ -26,6 +26,7 @@ exports.handler = async function(event) {
     try {
         // Search without active filter first so we can give a better error message
         const promoCodes = await stripe.promotionCodes.list({
+            expand: ['data.coupon'],
             code:  normalized,
             limit: 5,
         });
