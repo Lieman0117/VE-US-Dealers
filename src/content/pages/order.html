@@ -11,23 +11,27 @@ permalink: "/order/"
     <style>
         /* ── Payment Method Selector ── */
         .cs-payment-method {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            padding: 24px;
             margin: 24px 0 0 0;
         }
-        .cs-payment-method h3 {
-            margin: 0 0 16px 0;
+        .cs-payment-method > h3 {
+            margin: 0 0 12px 0;
             font-size: 1.05rem;
             font-weight: 700;
             color: #1a1a1a;
-            letter-spacing: 0.02em;
         }
+
+        /* Toggle row + detail panel share one border as a single unit */
+        .cs-payment-block {
+            border: 1.5px solid #d0d0d0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        /* Toggle row */
         .cs-payment-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
         }
         .cs-payment-option {
             position: relative;
@@ -43,32 +47,26 @@ permalink: "/order/"
             flex-direction: row;
             align-items: center;
             gap: 12px;
-            padding: 14px 16px;
-            border: 2px solid #ddd;
-            border-radius: 10px;
+            padding: 16px 18px;
             cursor: pointer;
-            background: #fff;
-            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            background: #fafafa;
+            transition: background 0.15s;
             user-select: none;
-            height: 100%;
-            box-sizing: border-box;
+            border-bottom: 1.5px solid #d0d0d0;
+        }
+        .cs-payment-option:first-child .cs-payment-card {
+            border-right: 1.5px solid #d0d0d0;
         }
         .cs-payment-option input[type="radio"]:checked + .cs-payment-card {
-            border-color: #b8860b;
-            box-shadow: 0 0 0 3px rgba(184,134,11,0.13);
             background: #fffdf4;
         }
         .cs-payment-card:hover {
-            border-color: #b8860b;
             background: #fffdf4;
         }
         .cs-payment-card .cs-pay-icon {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .cs-payment-card .cs-pay-icon svg {
             width: 100%;
@@ -81,52 +79,45 @@ permalink: "/order/"
         }
         .cs-payment-card .cs-pay-name {
             font-weight: 700;
-            font-size: 0.92rem;
+            font-size: 0.9rem;
             color: #1a1a1a;
             line-height: 1.2;
         }
         .cs-payment-card .cs-pay-desc {
-            font-size: 0.75rem;
-            color: #888;
+            font-size: 0.73rem;
+            color: #999;
             line-height: 1.3;
         }
         .cs-payment-option input[type="radio"]:checked + .cs-payment-card .cs-pay-name {
             color: #b8860b;
         }
+        /* Selected indicator bar on top */
+        .cs-payment-option input[type="radio"]:checked + .cs-payment-card {
+            box-shadow: inset 0 3px 0 0 #b8860b;
+        }
 
-        /* ── Shared panel style for both Stripe and Zelle details ── */
+        /* ── Detail panel (shared base) ── */
         .cs-pay-detail-panel {
             display: none;
-            border-radius: 10px;
-            padding: 20px 22px;
-            margin-top: 14px;
+            padding: 22px 24px;
             font-size: 0.9rem;
             line-height: 1.6;
-            border: 1.5px solid #e0e0e0;
-            background: #fff;
         }
-        .cs-pay-detail-panel .cs-panel-title {
+        .cs-pay-detail-panel .cs-panel-label {
+            font-size: 0.75rem;
             font-weight: 700;
-            font-size: 0.88rem;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.07em;
             text-transform: uppercase;
-            margin: 0 0 14px 0;
-            padding-bottom: 10px;
-            border-bottom: 1.5px solid #f0f0f0;
-            color: #444;
+            color: #999;
+            margin: 0 0 16px 0;
         }
 
-        /* Stripe panel specifics */
+        /* ── Stripe panel ── */
         #stripe-card-panel {
-            border-color: #635bff;
-            background: #fafafe;
-        }
-        #stripe-card-panel .cs-panel-title {
-            color: #635bff;
-            border-bottom-color: #e8e6ff;
+            background: #fff;
         }
         #stripe-payment-element {
-            margin-bottom: 4px;
+            min-height: 180px;
         }
         #stripe-card-errors {
             color: #c0392b;
@@ -136,27 +127,79 @@ permalink: "/order/"
             font-weight: 500;
         }
 
-        /* Zelle panel specifics */
+        /* Stripe promo code row */
+        .cs-stripe-promo {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #efefef;
+            align-items: flex-end;
+        }
+        .cs-stripe-promo label {
+            flex: 1;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .cs-stripe-promo input {
+            padding: 9px 12px;
+            border: 1.5px solid #ddd;
+            border-radius: 7px;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.15s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .cs-stripe-promo input:focus {
+            border-color: #635bff;
+        }
+        .cs-stripe-promo-btn {
+            padding: 9px 16px;
+            background: #635bff;
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+            flex-shrink: 0;
+        }
+        .cs-stripe-promo-btn:hover { background: #4b44d4; }
+        .cs-stripe-promo-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        #stripe-promo-msg {
+            font-size: 0.8rem;
+            margin-top: 6px;
+            min-height: 16px;
+        }
+        #stripe-promo-msg.success { color: #1a7a3c; }
+        #stripe-promo-msg.error   { color: #c0392b; }
+
+        /* ── Zelle panel ── */
         #zelle-info-panel {
-            border-color: #f0c040;
             background: #fffdf0;
-            color: #5a4500;
         }
-        #zelle-info-panel .cs-panel-title {
-            color: #7a5a00;
-            border-bottom-color: #f5e070;
-        }
-        #zelle-info-panel strong { color: #3d2f00; }
         .cs-zelle-address {
             display: inline-block;
             background: #fff8d6;
-            border: 1px solid #e8c840;
-            border-radius: 6px;
-            padding: 6px 12px;
+            border: 1.5px solid #e8c840;
+            border-radius: 7px;
+            padding: 7px 14px;
             font-weight: 700;
             color: #3d2f00;
-            margin: 4px 0 10px 0;
             font-size: 0.95rem;
+            margin: 4px 0 14px 0;
+        }
+        .cs-zelle-body {
+            font-size: 0.87rem;
+            color: #5a4500;
+            margin: 0 0 12px 0;
         }
         .cs-zelle-note {
             font-size: 0.82rem;
@@ -168,72 +211,41 @@ permalink: "/order/"
 
         /* ── Submit button ── */
         .cs-submit {
-            position: relative;
-            transition: background 0.2s, opacity 0.2s;
             display: block;
             width: 100%;
             min-height: 52px;
+            margin-top: 20px;
             box-sizing: border-box;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-top: 20px;
+            transition: background 0.2s, opacity 0.2s;
         }
-        .cs-submit.stripe-mode {
-            background: #635bff;
-        }
-        .cs-submit.stripe-mode:hover {
-            background: #4b44d4;
-        }
-        .cs-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+        .cs-submit.stripe-mode  { background: #635bff; }
+        .cs-submit.stripe-mode:hover { background: #4b44d4; }
+        .cs-submit:disabled { opacity: 0.6; cursor: not-allowed; }
         .stripe-processing {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.4);
+            width: 15px; height: 15px;
+            border: 2px solid rgba(255,255,255,0.35);
             border-top-color: #fff;
             border-radius: 50%;
             animation: spin 0.7s linear infinite;
             vertical-align: middle;
-            margin-right: 6px;
+            margin-right: 7px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── Order confirmation: Stripe vs Zelle panels ── */
-        .cs-confirm-stripe,
-        .cs-confirm-zelle {
-            display: none;
-        }
-        .cs-confirm-stripe.active,
-        .cs-confirm-zelle.active {
-            display: block;
-        }
+        /* ── Confirmation badges ── */
+        .cs-confirm-stripe, .cs-confirm-zelle { display: none; }
+        .cs-confirm-stripe.active, .cs-confirm-zelle.active { display: block; }
         .cs-paid-badge {
-            display: inline-block;
-            background: #28a745;
-            color: #fff;
-            font-size: 0.82rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-left: 8px;
-            vertical-align: middle;
+            display: inline-block; background: #28a745; color: #fff;
+            font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
+            padding: 3px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle;
         }
         .cs-pending-badge {
-            display: inline-block;
-            background: #fd7e14;
-            color: #fff;
-            font-size: 0.82rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            padding: 3px 10px;
-            border-radius: 20px;
-            margin-left: 8px;
-            vertical-align: middle;
+            display: inline-block; background: #fd7e14; color: #fff;
+            font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em;
+            padding: 3px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle;
         }
     </style>
 {% endblock %}
@@ -394,70 +406,86 @@ permalink: "/order/"
             <!-- ── Payment Method Selection ── -->
             <div class="cs-payment-method">
                 <h3>Select Payment Method</h3>
-                <div class="cs-payment-options">
 
-                    <!-- Stripe Option -->
-                    <label class="cs-payment-option">
-                        <input type="radio" name="payment-method-radio" id="pay-stripe" value="stripe" checked>
-                        <div class="cs-payment-card">
-                            <div class="cs-pay-icon">
-                                <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <rect x="2" y="8" width="40" height="28" rx="5" fill="#635bff"/>
-                                    <rect x="2" y="16" width="40" height="7" fill="#4b44d4"/>
-                                    <rect x="6" y="26" width="8" height="4" rx="1" fill="rgba(255,255,255,0.7)"/>
-                                    <rect x="17" y="26" width="5" height="4" rx="1" fill="rgba(255,255,255,0.4)"/>
-                                </svg>
-                            </div>
-                            <div class="cs-pay-text">
-                                <span class="cs-pay-name">Credit / Debit Card</span>
-                                <span class="cs-pay-desc">Secure Stripe checkout</span>
-                            </div>
-                        </div>
-                    </label>
+                <div class="cs-payment-block">
 
-                    <!-- Zelle Option -->
-                    <label class="cs-payment-option">
-                        <input type="radio" name="payment-method-radio" id="pay-zelle" value="zelle">
-                        <div class="cs-payment-card">
-                            <div class="cs-pay-icon">
-                                <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="22" cy="22" r="20" fill="#6d1ed4"/>
-                                    <text x="22" y="29" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" fill="white">Z</text>
-                                </svg>
+                    <!-- Toggle row -->
+                    <div class="cs-payment-options">
+
+                        <label class="cs-payment-option">
+                            <input type="radio" name="payment-method-radio" id="pay-stripe" value="stripe" checked>
+                            <div class="cs-payment-card">
+                                <div class="cs-pay-icon">
+                                    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="8" width="40" height="28" rx="5" fill="#635bff"/>
+                                        <rect x="2" y="16" width="40" height="7" fill="#4b44d4"/>
+                                        <rect x="6" y="26" width="8" height="4" rx="1" fill="rgba(255,255,255,0.7)"/>
+                                        <rect x="17" y="26" width="5" height="4" rx="1" fill="rgba(255,255,255,0.4)"/>
+                                    </svg>
+                                </div>
+                                <div class="cs-pay-text">
+                                    <span class="cs-pay-name">Credit / Debit Card</span>
+                                    <span class="cs-pay-desc">Secure Stripe checkout</span>
+                                </div>
                             </div>
-                            <div class="cs-pay-text">
-                                <span class="cs-pay-name">Pay with Zelle</span>
-                                <span class="cs-pay-desc">Bank transfer, no fees</span>
+                        </label>
+
+                        <label class="cs-payment-option">
+                            <input type="radio" name="payment-method-radio" id="pay-zelle" value="zelle">
+                            <div class="cs-payment-card">
+                                <div class="cs-pay-icon">
+                                    <svg viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="22" cy="22" r="20" fill="#6d1ed4"/>
+                                        <text x="22" y="29" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="20" font-weight="900" fill="white">Z</text>
+                                    </svg>
+                                </div>
+                                <div class="cs-pay-text">
+                                    <span class="cs-pay-name">Pay with Zelle</span>
+                                    <span class="cs-pay-desc">Bank transfer, no fees</span>
+                                </div>
                             </div>
+                        </label>
+
+                    </div>
+                    <!-- end toggle row -->
+
+                    <!-- Stripe detail panel -->
+                    <div id="stripe-card-panel" class="cs-pay-detail-panel">
+                        <p class="cs-panel-label">Card Details</p>
+                        <div id="stripe-payment-element"></div>
+                        <div id="stripe-card-errors"></div>
+
+                        <!-- Promo code for Stripe -->
+                        <div class="cs-stripe-promo">
+                            <label>
+                                Promo Code
+                                <input type="text" id="stripe-promo-input" placeholder="ENTER CODE" autocomplete="off">
+                            </label>
+                            <button type="button" class="cs-stripe-promo-btn" id="stripe-promo-btn">Apply</button>
                         </div>
-                    </label>
+                        <div id="stripe-promo-msg"></div>
+                    </div>
+
+                    <!-- Zelle detail panel -->
+                    <div id="zelle-info-panel" class="cs-pay-detail-panel">
+                        <p class="cs-panel-label">Zelle Payment Instructions</p>
+                        <p style="margin:0 0 4px 0; font-size:0.87rem; color:#5a4500;">Send payment to:</p>
+                        <div class="cs-zelle-address">veusllc@gmail.com</div>
+                        <p class="cs-zelle-body">
+                            Your order will be <strong>held as unpaid</strong> until we confirm your Zelle transfer. We'll email you within 24 hours.
+                        </p>
+                        <p class="cs-zelle-note">
+                            🏷️ <strong>Have a promo code?</strong> Include it in your Zelle payment note or email <strong>veusllc@gmail.com</strong> and we'll apply it manually.
+                        </p>
+                    </div>
 
                 </div>
-
-                <!-- Zelle info panel -->
-                <div id="zelle-info-panel" class="cs-pay-detail-panel">
-                    <p class="cs-panel-title">Zelle Payment Instructions</p>
-                    <p style="margin:0 0 4px 0;">Send payment to:</p>
-                    <span class="cs-zelle-address">veusllc@gmail.com</span>
-                    <p style="margin:0 0 0 0; font-size:0.87rem; color:#5a4500;">
-                        Your order will be <strong>held as unpaid</strong> until we confirm your Zelle transfer. We'll email you within 24 hours.
-                    </p>
-                    <p class="cs-zelle-note">
-                        🏷️ <strong>Have a promo code?</strong> Include it in your Zelle payment note or email <strong>veusllc@gmail.com</strong> and we'll apply it manually.
-                    </p>
-                </div>
+                <!-- end cs-payment-block -->
             </div>
             <!-- END payment method -->
 
-            <!-- Stripe embedded card element — shown when Stripe selected -->
-            <div id="stripe-card-panel" class="cs-pay-detail-panel">
-                <p class="cs-panel-title">Enter Card Details</p>
-                <div id="stripe-payment-element"></div>
-                <div id="stripe-card-errors"></div>
-            </div>
-
             <button class="cs-submit stripe-mode" type="submit" id="submit-btn">
-                Pay with Stripe &amp; Submit Order
+                Pay &amp; Submit Order
             </button>
         </form>
     </div>
@@ -490,14 +518,10 @@ permalink: "/order/"
             <div class="cs-confirm-zelle cs-payment-instructions-box" id="confirm-zelle-panel">
                 <h3>Payment Status <span class="cs-pending-badge">PENDING ZELLE</span></h3>
                 <p>Your order has been <strong>received but is on hold</strong> until your Zelle payment is confirmed.</p>
-
                 <div class="cs-payment-step">
                     <div class="cs-step-number">1</div>
-                    <div class="cs-step-text">
-                        <strong>Open Zelle in your bank app or online banking</strong>
-                    </div>
+                    <div class="cs-step-text"><strong>Open Zelle in your bank app or online banking</strong></div>
                 </div>
-
                 <div class="cs-payment-step">
                     <div class="cs-step-number">2</div>
                     <div class="cs-step-text">
@@ -505,7 +529,6 @@ permalink: "/order/"
                         <div class="cs-zelle-email-display">veusllc@gmail.com</div>
                     </div>
                 </div>
-
                 <div class="cs-payment-step">
                     <div class="cs-step-number">3</div>
                     <div class="cs-step-text">
@@ -513,14 +536,10 @@ permalink: "/order/"
                         <div class="cs-payment-amount-display" id="zelle-amount"></div>
                     </div>
                 </div>
-
                 <div class="cs-payment-step">
                     <div class="cs-step-number">4</div>
-                    <div class="cs-step-text">
-                        <strong>Add a note with your name and order date</strong>
-                    </div>
+                    <div class="cs-step-text"><strong>Add a note with your name and order date</strong></div>
                 </div>
-
                 <div class="cs-delivery-info">
                     <p>We'll confirm receipt of your payment and provide tracking information within 24 hours.</p>
                 </div>
@@ -537,18 +556,15 @@ permalink: "/order/"
     <div class="cs-container">
         <div class="cs-content" style="margin-bottom: 30px;">
             <h3 class="cs-title" style="font-size: 1.4rem;">Why does VE/US use Zelle?</h3>
-
             <p class="cs-text" style="margin-bottom: 15px;">
                 Zelle is owned by a group of the largest U.S. banks. The cash transfer
                 never leaves the banking system. Because it is safe and controlled,
                 the banks provide this as a <strong>FREE cash payment system</strong>.
             </p>
-
             <p class="cs-text" style="margin-bottom: 15px;">
                 This minimizes another VE/US supply cost. Dealers need maximum retail
                 markup to cover all local retail costs.
             </p>
-
             <p class="cs-text" style="margin-bottom: 0;">
                 VE/US's goal is to eliminate all unnecessary costs for providing
                 Dealers the best value-engineered products currently available to
@@ -560,69 +576,61 @@ permalink: "/order/"
 
 <script>
 // ─────────────────────────────────────────────
-//  CONFIG — swap these for your real keys
+//  CONFIG
 // ─────────────────────────────────────────────
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SejS2INaoLHhx8TLfd98rWVd58OMgTy2gC7gzAA5SJCRyLRJTPdSpsg02TFrw58IZhuMQhw1EvbWn1cBUEUj67900XbYXc90K'; // ← your test publishable key
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51SejS2INaoLHhx8TLfd98rWVd58OMgTy2gC7gzAA5SJCRyLRJTPdSpsg02TFrw58IZhuMQhw1EvbWn1cBUEUj67900XbYXc90K';
 const CREATE_PAYMENT_INTENT_URL = '/.netlify/functions/create-payment-intent';
 
-// Init Stripe.js
 const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
 let stripeElements = null;
 let stripePaymentElement = null;
 
 // ─────────────────────────────────────────────
+//  Promo code state (Stripe)
+// ─────────────────────────────────────────────
+let stripePromoCode = null;      // validated code string
+let stripePromoDiscount = 0;     // discount amount in dollars
+
+// ─────────────────────────────────────────────
 //  Date setup
 // ─────────────────────────────────────────────
 const today = new Date();
-const dateString = today.toLocaleDateString('en-US', { 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-});
+const dateString = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 document.getElementById('current-date').textContent = dateString;
 document.getElementById('order-date').value = dateString;
 
-// ─────────────────────────────────────────────
-//  Check if returning from cancelled Stripe session
-// ─────────────────────────────────────────────
 const urlParams = new URLSearchParams(window.location.search);
 
 // ─────────────────────────────────────────────
 //  Payment method toggle
 // ─────────────────────────────────────────────
-const submitBtn = document.getElementById('submit-btn');
-const zellePanel = document.getElementById('zelle-info-panel');
+const submitBtn     = document.getElementById('submit-btn');
+const zellePanel    = document.getElementById('zelle-info-panel');
+const cardPanel     = document.getElementById('stripe-card-panel');
 const payMethodHidden = document.getElementById('payment-method-hidden');
 
 function updatePaymentUI() {
-    const selectedMethod = document.querySelector('input[name="payment-method-radio"]:checked').value;
-    payMethodHidden.value = selectedMethod;
+    const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
+    payMethodHidden.value = method;
     document.getElementById('payment-status-hidden').value =
-        selectedMethod === 'stripe' ? 'paid' : 'unpaid - pending zelle';
+        method === 'stripe' ? 'paid' : 'unpaid - pending zelle';
 
-    const cardPanel = document.getElementById('stripe-card-panel');
-
-    if (selectedMethod === 'stripe') {
+    if (method === 'stripe') {
         submitBtn.textContent = 'Pay & Submit Order';
         submitBtn.classList.add('stripe-mode');
+        cardPanel.style.display  = 'block';
         zellePanel.style.display = 'none';
-        cardPanel.style.display = 'block';
-        // Mount the Payment Element if not already mounted
-        if (!stripeElements) {
-            mountStripeElement();
-        }
+        if (!stripeElements) mountStripeElement();
     } else {
         submitBtn.textContent = 'Submit Zelle Order';
         submitBtn.classList.remove('stripe-mode');
         zellePanel.style.display = 'block';
-        cardPanel.style.display = 'none';
+        cardPanel.style.display  = 'none';
     }
 }
 
 function mountStripeElement() {
-    // Mount card UI immediately — no server call needed until payment is confirmed at submit
-    // Uses Stripe Elements in "amount unknown" mode; PaymentIntent created at submit time
-    if (stripeElements) return; // already mounted
+    if (stripeElements) return;
     try {
         stripeElements = stripe.elements({ mode: 'payment', currency: 'usd', amount: 100, appearance: { theme: 'stripe' } });
         stripePaymentElement = stripeElements.create('payment');
@@ -633,97 +641,140 @@ function mountStripeElement() {
     }
 }
 
-document.querySelectorAll('input[name="payment-method-radio"]').forEach(function(radio) {
-    radio.addEventListener('change', updatePaymentUI);
+document.querySelectorAll('input[name="payment-method-radio"]').forEach(function(r) {
+    r.addEventListener('change', updatePaymentUI);
+});
+updatePaymentUI(); // run on load
+
+// ─────────────────────────────────────────────
+//  Stripe promo code handler — validated server-side via Stripe API
+// ─────────────────────────────────────────────
+document.getElementById('stripe-promo-btn').addEventListener('click', async function() {
+    const input  = document.getElementById('stripe-promo-input');
+    const msgEl  = document.getElementById('stripe-promo-msg');
+    const code   = input.value.trim().toUpperCase();
+
+    if (!code) {
+        msgEl.textContent = 'Please enter a promo code.';
+        msgEl.className = 'error';
+        return;
+    }
+    if (stripePromoCode) {
+        msgEl.textContent = 'A promo code is already applied.';
+        msgEl.className = 'error';
+        return;
+    }
+
+    this.disabled    = true;
+    this.textContent = 'Checking…';
+    msgEl.textContent = '';
+    msgEl.className   = '';
+
+    try {
+        const res = await fetch('/.netlify/functions/validate-promo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code })
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+            stripePromoCode     = code;
+            stripePromoDiscount = data.discountPercent; // e.g. 0.10 for 10%
+            msgEl.textContent   = '✓ ' + data.message;
+            msgEl.className     = 'success';
+            input.disabled      = true;
+            this.textContent    = 'Applied ✓';
+            calculateTotals();
+        } else {
+            msgEl.textContent = data.message || 'Invalid promo code.';
+            msgEl.className   = 'error';
+            this.disabled     = false;
+            this.textContent  = 'Apply';
+        }
+    } catch(err) {
+        msgEl.textContent = 'Could not validate code. Please try again.';
+        msgEl.className   = 'error';
+        this.disabled     = false;
+        this.textContent  = 'Apply';
+    }
 });
 
-// Run on page load so card panel shows immediately (Stripe is default selection)
-updatePaymentUI();
+document.getElementById('stripe-promo-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('stripe-promo-btn').click(); }
+});
 
 // ─────────────────────────────────────────────
 //  Calculate subtotals and grand total
 // ─────────────────────────────────────────────
 function calculateTotals() {
-    const quantities = document.querySelectorAll('.cs-quantity');
     let subtotal = 0;
-    
-    quantities.forEach(function(input) {
-        const qty = parseInt(input.value) || 0;
+    document.querySelectorAll('.cs-quantity').forEach(function(input) {
+        const qty   = parseInt(input.value) || 0;
         const price = parseInt(input.getAttribute('data-price'));
-        const itemSubtotal = qty * price;
-        
-        const subtotalId = 'subtotal-' + input.id.replace('qty-', '');
-        const subtotalElement = document.getElementById(subtotalId);
-        if (subtotalElement) {
-            subtotalElement.textContent = '$' + itemSubtotal;
-        }
-        
-        const hiddenSubtotalId = 'hidden-subtotal-' + input.id.replace('qty-', '');
-        const hiddenElement = document.getElementById(hiddenSubtotalId);
-        if (hiddenElement) {
-            hiddenElement.value = itemSubtotal;
-        }
-        
-        subtotal += itemSubtotal;
+        const item  = qty * price;
+        const subEl = document.getElementById('subtotal-' + input.id.replace('qty-', ''));
+        if (subEl) subEl.textContent = '$' + item;
+        const hidEl = document.getElementById('hidden-subtotal-' + input.id.replace('qty-', ''));
+        if (hidEl) hidEl.value = item;
+        subtotal += item;
     });
-    
-    const subtotalElement = document.getElementById('order-subtotal');
-    if (subtotalElement) subtotalElement.textContent = '$' + subtotal;
 
-    const grandTotal = subtotal;
+    const discount   = Math.round(subtotal * stripePromoDiscount);
+    const grandTotal = subtotal - discount;
 
-    const grandTotalElement = document.getElementById('grand-total');
-    if (grandTotalElement) grandTotalElement.textContent = '$' + grandTotal;
-    
-    const totalAmountElement = document.getElementById('total-amount');
-    if (totalAmountElement) totalAmountElement.value = grandTotal;
+    document.getElementById('order-subtotal').textContent = '$' + subtotal;
+    document.getElementById('grand-total').textContent    = '$' + grandTotal;
+    document.getElementById('total-amount').value         = grandTotal;
 }
 
 document.querySelectorAll('.cs-quantity').forEach(function(input) {
     input.addEventListener('input', calculateTotals);
 });
 
+// Re-mount stripe element if quantities change (so amount is fresh)
+document.querySelectorAll('.cs-quantity').forEach(function(input) {
+    input.addEventListener('change', function() {
+        const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
+        if (method === 'stripe') {
+            stripeElements = null; stripePaymentElement = null;
+            document.getElementById('stripe-payment-element').innerHTML = '';
+            mountStripeElement();
+        }
+    });
+});
+
 // ─────────────────────────────────────────────
-//  Helpers: build order summary HTML
+//  Order summary helpers
 // ─────────────────────────────────────────────
 function buildOrderItemsHTML() {
-    const orderItemsHTML = [];
-    const qty48v = parseInt(document.getElementById('qty-48v').value) || 0;
-    const qty36v = parseInt(document.getElementById('qty-36v').value) || 0;
-    const qty12v = parseInt(document.getElementById('qty-12v').value) || 0;
-    
-    if (qty48v > 0) orderItemsHTML.push('<p><strong>' + qty48v + 'x</strong> 48V 100Ah Golf Cart Battery @ $900 = <strong>$' + (qty48v * 900) + '</strong></p>');
-    if (qty36v > 0) orderItemsHTML.push('<p><strong>' + qty36v + 'x</strong> 36V 100Ah Golf Cart Battery @ $750 = <strong>$' + (qty36v * 750) + '</strong></p>');
-    if (qty12v > 0) orderItemsHTML.push('<p><strong>' + qty12v + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (qty12v * 495) + '</strong></p>');
-    
-    return orderItemsHTML.join('');
+    const lines = [];
+    const q48 = parseInt(document.getElementById('qty-48v').value) || 0;
+    const q36 = parseInt(document.getElementById('qty-36v').value) || 0;
+    const q12 = parseInt(document.getElementById('qty-12v').value) || 0;
+    if (q48 > 0) lines.push('<p><strong>' + q48 + 'x</strong> 48V 100Ah Golf Cart Battery @ $900 = <strong>$' + (q48*900) + '</strong></p>');
+    if (q36 > 0) lines.push('<p><strong>' + q36 + 'x</strong> 36V 100Ah Golf Cart Battery @ $750 = <strong>$' + (q36*750) + '</strong></p>');
+    if (q12 > 0) lines.push('<p><strong>' + q12 + 'x</strong> 12V 314Ah RV/Boat Battery @ $495 = <strong>$' + (q12*495) + '</strong></p>');
+    if (stripePromoCode) {
+        const sub = (parseInt(document.getElementById('qty-48v').value)||0)*900 +
+                    (parseInt(document.getElementById('qty-36v').value)||0)*750 +
+                    (parseInt(document.getElementById('qty-12v').value)||0)*495;
+        lines.push('<p style="color:#1a7a3c;"><strong>Promo (' + stripePromoCode + '):</strong> -$' + Math.round(sub * stripePromoDiscount) + '</p>');
+    }
+    return lines.join('');
 }
 
 function showConfirmation(paymentMethod, grandTotal) {
     document.getElementById('order-items').innerHTML = buildOrderItemsHTML();
     document.getElementById('confirm-total').textContent = '$' + grandTotal;
-    document.getElementById('zelle-amount').textContent = '$' + grandTotal;
+    document.getElementById('zelle-amount').textContent  = '$' + grandTotal;
 
-    // Show correct panel
-    const stripePanel = document.getElementById('confirm-stripe-panel');
-    const zellePanel2 = document.getElementById('confirm-zelle-panel');
-    if (paymentMethod === 'stripe') {
-        stripePanel.classList.add('active');
-        zellePanel2.classList.remove('active');
-    } else {
-        zellePanel2.classList.add('active');
-        stripePanel.classList.remove('active');
-    }
+    document.getElementById('confirm-stripe-panel').classList.toggle('active', paymentMethod === 'stripe');
+    document.getElementById('confirm-zelle-panel').classList.toggle('active',  paymentMethod === 'zelle');
 
-    // Hide form, show confirmation
-    document.querySelectorAll('#cs-contact-549').forEach(function(section) {
-        section.style.display = 'none';
-    });
-    const confirmationSection = document.getElementById('cs-order-confirmation');
-    if (confirmationSection) {
-        confirmationSection.style.display = 'block';
-        confirmationSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    document.querySelectorAll('#cs-contact-549').forEach(function(s) { s.style.display = 'none'; });
+    const conf = document.getElementById('cs-order-confirmation');
+    if (conf) { conf.style.display = 'block'; conf.scrollIntoView({ behavior: 'smooth' }); }
 }
 
 // ─────────────────────────────────────────────
@@ -733,20 +784,16 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const grandTotal = parseInt(document.getElementById('total-amount').value) || 0;
-
     if (grandTotal === 0) {
         alert('Please select at least one product with quantity greater than 0');
         return;
     }
 
-    const selectedMethod = document.querySelector('input[name="payment-method-radio"]:checked').value;
+    const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
 
-    // ── STRIPE FLOW ──────────────────────────────
-    if (selectedMethod === 'stripe') {
-        if (!stripeElements) {
-            alert('Card form is not loaded yet. Please select the Stripe option again.');
-            return;
-        }
+    // ── STRIPE ──────────────────────────────────
+    if (method === 'stripe') {
+        if (!stripeElements) { alert('Card form not loaded yet. Please wait a moment.'); return; }
 
         const errorEl = document.getElementById('stripe-card-errors');
         errorEl.textContent = '';
@@ -754,7 +801,7 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
         submitBtn.innerHTML = '<span class="stripe-processing"></span> Processing…';
 
         try {
-            // Step 1: Call elements.submit() FIRST (required for deferred PaymentIntent flow)
+            // 1. Validate card fields
             const { error: submitError } = await stripeElements.submit();
             if (submitError) {
                 errorEl.textContent = submitError.message;
@@ -763,20 +810,21 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 return;
             }
 
-            // Step 2: Create PaymentIntent on server with the real total
-            const piRes = await fetch(CREATE_PAYMENT_INTENT_URL, {
+            // 2. Create PaymentIntent with real total
+            const piRes  = await fetch(CREATE_PAYMENT_INTENT_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: grandTotal * 100 }) // dollars → cents
+                body: JSON.stringify({
+                    amount:    grandTotal * 100,  // cents
+                    promoCode: stripePromoCode || null,
+                })
             });
-            const piRaw = await piRes.text();
+            const piRaw  = await piRes.text();
             let piJson;
-            try { piJson = JSON.parse(piRaw); } catch(e) {
-                throw new Error('Server error: ' + piRaw.substring(0, 200));
-            }
+            try { piJson = JSON.parse(piRaw); } catch(e) { throw new Error('Server error: ' + piRaw.substring(0,200)); }
             if (!piJson.clientSecret) throw new Error(piJson.error || 'No client secret returned');
 
-            // Step 3: Confirm the card payment inline (no redirect)
+            // 3. Confirm payment inline
             const { error, paymentIntent } = await stripe.confirmPayment({
                 elements: stripeElements,
                 clientSecret: piJson.clientSecret,
@@ -793,8 +841,7 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 redirect: 'if_required',
             });
 
-            // Log everything so we can see what Stripe returns
-            console.log('confirmPayment result — error:', error, '| paymentIntent:', paymentIntent);
+            console.log('Stripe result:', { error, paymentIntent });
 
             if (error) {
                 errorEl.textContent = error.message;
@@ -803,17 +850,14 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                 return;
             }
 
-            // Accept 'succeeded' OR 'processing' (some payment methods settle async)
-            const successStatuses = ['succeeded', 'processing'];
-            if (paymentIntent && successStatuses.includes(paymentIntent.status)) {
-                // Submit full order form to Netlify with paid status
+            if (paymentIntent && ['succeeded','processing'].includes(paymentIntent.status)) {
                 document.getElementById('payment-method-hidden').value = 'stripe / credit card';
                 document.getElementById('payment-status-hidden').value =
                     paymentIntent.status === 'succeeded' ? 'paid' : 'processing';
 
                 const formData = new URLSearchParams(new FormData(document.getElementById('Order')));
                 formData.set('stripe-payment-intent', paymentIntent.id);
-                formData.set('stripe-payment-status', paymentIntent.status);
+                formData.set('stripe-promo-code', stripePromoCode || '');
 
                 try {
                     await fetch('/', {
@@ -821,39 +865,28 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
                         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: formData.toString()
                     });
-                } catch(e) {
-                    console.warn('Netlify form submit after payment:', e);
-                }
+                } catch(fe) { console.warn('Netlify form submit:', fe); }
 
                 showConfirmation('stripe', grandTotal);
-
-            } else if (!paymentIntent && !error) {
-                // confirmPayment returned neither error nor paymentIntent — log it
-                errorEl.textContent = 'Unexpected response from Stripe. Check the browser console (F12) for details.';
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Pay &amp; Submit Order';
-                console.error('confirmPayment returned no error and no paymentIntent. Full result:', { error, paymentIntent });
-
             } else {
-                errorEl.textContent = 'Payment status: ' + (paymentIntent ? paymentIntent.status : 'none') + '. Please try again or contact us.';
+                errorEl.textContent = 'Payment status: ' + (paymentIntent ? paymentIntent.status : 'unknown') + '. Please try again.';
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = 'Pay &amp; Submit Order';
-                console.error('Unexpected payment status:', paymentIntent);
+                console.error('Unexpected status:', paymentIntent);
             }
 
         } catch(err) {
-            errorEl.textContent = err.message;
+            document.getElementById('stripe-card-errors').textContent = err.message;
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'Pay &amp; Submit Order';
-            console.error('Stripe payment error:', err);
+            console.error('Stripe error:', err);
         }
         return;
     }
 
-    // ── ZELLE FLOW ───────────────────────────────
+    // ── ZELLE ───────────────────────────────────
     document.getElementById('payment-method-hidden').value = 'zelle';
     document.getElementById('payment-status-hidden').value = 'unpaid - pending zelle';
-
     try {
         await fetch('/', {
             method: 'POST',
@@ -861,24 +894,10 @@ document.getElementById('Order').addEventListener('submit', async function(e) {
             body: new URLSearchParams(new FormData(this)).toString()
         });
         showConfirmation('zelle', grandTotal);
-    } catch (error) {
+    } catch (err) {
         alert('Error submitting order. Please try again or contact us directly.');
-        console.error(error);
+        console.error(err);
     }
-});
-
-// Re-mount Stripe element when total changes (so PaymentIntent has right amount)
-document.querySelectorAll('.cs-quantity').forEach(function(input) {
-    input.addEventListener('change', function() {
-        const method = document.querySelector('input[name="payment-method-radio"]:checked').value;
-        if (method === 'stripe') {
-            // Reset so it remounts with updated amount
-            stripeElements = null;
-            stripePaymentElement = null;
-            document.getElementById('stripe-payment-element').innerHTML = '';
-            mountStripeElement();
-        }
-    });
 });
 </script>
 
