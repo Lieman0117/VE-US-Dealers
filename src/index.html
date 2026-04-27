@@ -120,21 +120,112 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 
 <section id="sbsr-1279">
     <div class="cs-container">
-        <picture class="cs-picture">
-            <!--Mobile Image-->
-            <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 640, height: 1490 }) | webp %}" type="image/webp">
-            <!--Tablet and Above Image-->
-            <source media="(min-width: 601px)" srcset="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
-            <img src="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 1, height: 1 }) | webp %}" alt="Label Photo" width="770" height="598" loading="lazy" decoding="async">
-        </picture>
+
+        <!-- CAROUSEL replacing the single <picture> -->
+        <div class="cs-picture cs-carousel" aria-label="Installation photo carousel">
+            <div class="cs-carousel-track">
+                <!-- Slide 1 -->
+                <div class="cs-carousel-slide active">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install1.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install1.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install1.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 1"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 2 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install2.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install2.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install2.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 2"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 3 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install3.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install3.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install3.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 3"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 4 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install4.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install4.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install4.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 4"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 5 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install5.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install5.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install5.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 5"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 6 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install6.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install6.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install6.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 6"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 7 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install7.jpg'  | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install7.jpg'  | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install7.jpg'  | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 7"  width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 8 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install11.jpg' | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install11.jpg' | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install11.jpg' | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 11" width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+                <!-- Slide 9 -->
+                <div class="cs-carousel-slide">
+                    <picture>
+                        <source media="(max-width: 600px)"  srcset="{% getUrl '/assets/images/Install12.jpg' | resize({ width: 640,  height: 1490 }) | webp %}" type="image/webp">
+                        <source media="(min-width: 601px)"  srcset="{% getUrl '/assets/images/Install12.jpg' | resize({ width: 2048, height: 1922 }) | webp %}" type="image/webp">
+                        <img src="{% getUrl '/assets/images/Install12.jpg' | resize({ width: 1, height: 1 }) | webp %}" alt="Installation Photo 12" width="770" height="598" loading="lazy" decoding="async">
+                    </picture>
+                </div>
+            </div>
+
+            <!-- Prev / Next buttons -->
+            <button class="cs-carousel-btn cs-carousel-prev" aria-label="Previous image">&#8249;</button>
+            <button class="cs-carousel-btn cs-carousel-next" aria-label="Next image">&#8250;</button>
+
+            <!-- Dot indicators -->
+            <div class="cs-carousel-dots" aria-hidden="true">
+                <span class="cs-dot active"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+                <span class="cs-dot"></span>
+            </div>
+        </div>
+        <!-- END CAROUSEL -->
+
         <div class="cs-content">
             <div class="cs-flex">
                 <h2 class="cs-title">Vehicle Electronics Us</h2>
             </div>
             <p class="cs-text">
-                Vehicle Electronics (VE/US) supplies Dealers with Value Engineered lithium products designed to upgrade their customers’ existing machines at prices competitive with current Lead Acid replacements. We do not sell directly to customers. Instead, we support qualified local Service Dealers — the Tech Experts who handle installation, service, and customer care. VE/US provides efficient, direct manufacturer delivery and simple Special Order supply so Dealers can offer modern lithium solutions without unnecessary costs or middlemen.
-             <br><br> 
-             <a href="/Dealer-Access-Request/" class="cs-button-solid">Apply for Dealer</a>
+                Vehicle Electronics (VE/US) supplies Dealers with Value Engineered lithium products designed to upgrade their customers' existing machines at prices competitive with current Lead Acid replacements. We do not sell directly to customers. Instead, we support qualified local Service Dealers — the Tech Experts who handle installation, service, and customer care. VE/US provides efficient, direct manufacturer delivery and simple Special Order supply so Dealers can offer modern lithium solutions without unnecessary costs or middlemen.
+            </p>
+            <br>
+            <a href="/Dealer-Access-Request/" class="cs-button-solid">Apply for Dealer</a>
         </div>
     </div>
 </section>
@@ -184,7 +275,7 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
         <a href="/Dealer-Access-Request/" class="cs-button-solid">Apply for Dealer</a>
     </div>
 </section>
-                           
+
 
 <!-- ============================================ -->
 <!--                  Products                    -->
@@ -200,15 +291,14 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                     Commercial-grade batteries designed for golf carts, RVs, and marine applications. Dealer-only access to competitive pricing.
                 </p>
                 <a href="/products/" class="cs-button-solid">View All Products</a>
-            </div>   
-        </div>               
+            </div>
+        </div>
         <div class="cs-card-wrapper">
             <span class="cs-header">Our Batteries</span>
             <ul class="cs-card-group">
                 <!-- Card 1: 48V Golf Cart Battery -->
                 <li class="cs-item">
                     <a href="/products/" class="cs-link">
-                        <!-- IMAGE REMOVED FOR NOW -->
                         <h3 class="cs-h3">48V Golf Cart Battery</h3>
                         <p class="cs-item-text">
                             48V 100Ah lithium system with 200A smart BMS and integrated charger. Powers golf carts for extended range with 88 lbs total weight. Grade A cells with 5-year battery and 2-year charger warranty.
@@ -219,11 +309,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                         </span>
                     </a>
                 </li>
-                
+
                 <!-- Card 2: 36V Golf Cart Battery -->
                 <li class="cs-item">
                     <a href="/products/" class="cs-link">
-                        <!-- IMAGE REMOVED FOR NOW -->
                         <h3 class="cs-h3">36V Golf Cart Battery</h3>
                         <p class="cs-item-text">
                             36V 100Ah lithium system with 200A smart BMS and integrated charger. Ideal for 36V golf cart upgrades with reduced weight and faster charging. Grade A cells with 5-year battery and 2-year charger warranty.
@@ -234,11 +323,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                         </span>
                     </a>
                 </li>
-                
+
                 <!-- Card 3: 12V RV & Marine Battery -->
                 <li class="cs-item">
                     <a href="/products/" class="cs-link">
-                        <!-- IMAGE REMOVED FOR NOW -->
                         <h3 class="cs-h3">12V RV & Marine Battery</h3>
                         <p class="cs-item-text">
                             12V 314Ah high-capacity lithium for RVs, boats, trolling motors, and off-grid systems. IP65 waterproof rating for harsh environments. Premium A-grade cells with 5-year warranty.
@@ -252,117 +340,137 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
             </ul>
         </div>
     </div>
-</section>             
+</section>
 
-    <!-- ============================================ -->
-    <!--                   Gallery                    -->
-    <!-- ============================================ -->
 
-    <section id="gallery-48">
-        <div class="cs-container">
-            <div class="cs-content">
-                <h2 class="cs-title">
-                    Real Installations
-                </h2>
-            </div>
-            <div class="cs-image-group">
-                <div class="cs-row cs-row-1">
-                    <!-- Row 1-->
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install1.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install6.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install6.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install6.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install6.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install7.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install7.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install7.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install7.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-                <!-- Row 2 -->
-                <div class="cs-row cs-row-2">
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install2.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install2.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install2.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install2.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install5.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install5.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install5.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install5.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install11.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install11.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install11.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install11.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-                <!-- Row 3 -->
-                <div class="cs-row cs-row-3">
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install3.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install3.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install3.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install3.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install4.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install4.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install4.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install4.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <picture class="cs-picture cs-picture-1">
-                        <!--Mobile Image-->
-                        <source media="(max-width: 600px)" srcset="{% getUrl "/assets/images/Install12.jpg" | resize({ width: 182, height: 250 }) | webp %}" type="image/webp">
-                        <!--Tablet Image-->
-                        <source media="(max-width: 1024px)" srcset="{% getUrl "/assets/images/Install12.jpg" | resize({ width: 634, height: 798 }) | webp %}" type="image/webp">
-                        <!--Desktop Image-->
-                        <source media="(min-width: 1024px)" srcset="{% getUrl "/assets/images/Install12.jpg" | resize({ width: 826, height: 1134 }) | webp %}" type="image/webp">
-                        <img src="{% getUrl "/assets/images/Install12.jpg" | resize({ width: 826, height: 1134 }) | webp %}" alt="Battery Installed" width="413" height="567" loading="lazy" decoding="async">
-                    </picture>
-                    <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- ============================================ -->
+<!--         Carousel CSS & JS (scoped)           -->
+<!-- ============================================ -->
+<style>
+    /* --- Carousel wrapper: matches original .cs-picture sizing/shape --- */
+    #sbsr-1279 .cs-carousel {
+        position: relative;
+        overflow: hidden;
+        /* keep the same block-level behaviour as the original <picture> */
+        display: block;
+        border-radius: inherit; /* picks up whatever the theme sets on .cs-picture */
+    }
 
+    #sbsr-1279 .cs-carousel-track {
+        display: block;
+        width: 100%;
+        height: 100%;
+    }
+
+    #sbsr-1279 .cs-carousel-slide {
+        display: none;
+        width: 100%;
+    }
+
+    #sbsr-1279 .cs-carousel-slide.active {
+        display: block;
+    }
+
+    #sbsr-1279 .cs-carousel-slide picture,
+    #sbsr-1279 .cs-carousel-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Prev / Next buttons */
+    #sbsr-1279 .cs-carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.45);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    #sbsr-1279 .cs-carousel-btn:hover {
+        background: rgba(0, 0, 0, 0.7);
+    }
+
+    #sbsr-1279 .cs-carousel-prev { left: 0.75rem; }
+    #sbsr-1279 .cs-carousel-next { right: 0.75rem; }
+
+    /* Dot indicators */
+    #sbsr-1279 .cs-carousel-dots {
+        position: absolute;
+        bottom: 0.6rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.4rem;
+        z-index: 10;
+    }
+
+    #sbsr-1279 .cs-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    #sbsr-1279 .cs-dot.active {
+        background: #fff;
+    }
+</style>
+
+<script>
+(function () {
+    const section  = document.getElementById('sbsr-1279');
+    if (!section) return;
+
+    const slides   = section.querySelectorAll('.cs-carousel-slide');
+    const dots     = section.querySelectorAll('.cs-dot');
+    const prevBtn  = section.querySelector('.cs-carousel-prev');
+    const nextBtn  = section.querySelector('.cs-carousel-next');
+    let current    = 0;
+    let autoTimer;
+
+    function goTo(index) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = (index + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+    }
+
+    function startAuto() {
+        autoTimer = setInterval(() => goTo(current + 1), 5000);
+    }
+
+    function resetAuto() {
+        clearInterval(autoTimer);
+        startAuto();
+    }
+
+    prevBtn.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
+    nextBtn.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => { goTo(i); resetAuto(); });
+    });
+
+    startAuto();
+})();
+</script>
 
     {% include 'sections/cta.html' %}
 {% endblock %}
