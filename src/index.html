@@ -21,10 +21,6 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
     {% else %}
         <link rel="stylesheet" href="/assets/css/local.css"/>
     {% endif %}
-
-    <!-- To ensure proper validation, prevent errors, and encourage developers to check, schema's are an opt-in feature. They're very bespoke and requires some customising  -->
-    <!-- Uncomment the code below to enable Structured Data, and test it when you deploy to Netlify - https://developers.google.com/search/docs/appearance/structured-data -->
-    <!-- {% include "components/home-schema.html" %} -->
 {% endblock %}
 
 {% block body %}
@@ -344,16 +340,157 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 
 
 <!-- ============================================ -->
+<!--           Why Dealers Choose VEUS            -->
+<!-- ============================================ -->
+
+<section id="why-dealers">
+    <div class="cs-container">
+        <div class="cs-content">
+            <h2 class="cs-title">Why Dealers Choose VE/US</h2>
+        </div>
+        <ul class="cs-card-group">
+            <li class="cs-item">
+                <picture class="cs-icon">
+                    <img loading="lazy" decoding="async" src="/assets/svgs/money.svg" alt="icon" width="52" height="52" aria-hidden="true">
+                </picture>
+                <h3 class="cs-h3">Competitive Pricing</h3>
+                <p class="cs-item-p">
+                    Offer your customers lithium upgrades at lead-acid price points — no margin squeeze required.
+                </p>
+            </li>
+            <li class="cs-item">
+                <picture class="cs-icon">
+                    <img loading="lazy" decoding="async" src="/assets/svgs/form.svg" alt="icon" width="52" height="52" aria-hidden="true">
+                </picture>
+                <h3 class="cs-h3">Simple Ordering</h3>
+                <p class="cs-item-p">
+                    No overseas coordination or confusion — just place your order and we handle the rest.
+                </p>
+            </li>
+            <li class="cs-item">
+                <picture class="cs-icon">
+                    <img loading="lazy" decoding="async" src="/assets/svgs/s3.svg" alt="icon" width="52" height="52" aria-hidden="true">
+                </picture>
+                <h3 class="cs-h3">Reliable Supply</h3>
+                <p class="cs-item-p">
+                    A direct relationship with our manufacturer ensures consistent product availability when you need it.
+                </p>
+            </li>
+            <li class="cs-item">
+                <picture class="cs-icon">
+                    <img loading="lazy" decoding="async" src="/assets/svgs/truck.svg" alt="icon" width="52" height="52" aria-hidden="true">
+                </picture>
+                <h3 class="cs-h3">Fast Fulfillment</h3>
+                <p class="cs-item-p">
+                    Orders ship directly from our supplier, typically within one week.
+                </p>
+            </li>
+            <li class="cs-item">
+                <picture class="cs-icon">
+                    <img loading="lazy" decoding="async" src="/assets/svgs/s3.svg" alt="icon" width="52" height="52" aria-hidden="true">
+                </picture>
+                <h3 class="cs-h3">U.S.-Based Support</h3>
+                <p class="cs-item-p">
+                    Real people, real support when you need it.
+                </p>
+            </li>
+        </ul>
+        <p class="cs-text cs-goal">
+            Our goal is simple: make it easy for dealers to upgrade their customers to lithium — without the typical complexity or cost barriers.
+        </p>
+        <a href="/Dealer-Access-Request/" class="cs-button-solid">Apply for Dealer</a>
+    </div>
+</section>
+
+<style>
+    /* ── Why Dealers section ── */
+    #why-dealers {
+        padding: clamp(3rem, 6vw, 6rem) 1rem;
+        background-color: var(--bodyTextColorWhite, #fafafa);
+    }
+
+    #why-dealers .cs-container {
+        max-width: 80rem;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2.5rem;
+        text-align: center;
+    }
+
+    #why-dealers .cs-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    #why-dealers .cs-card-group {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1.5rem;
+        width: 100%;
+    }
+
+    #why-dealers .cs-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 2rem 1.5rem;
+        background: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        text-align: center;
+    }
+
+    #why-dealers .cs-h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    #why-dealers .cs-item-p {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: var(--bodyTextColor, #444);
+    }
+
+    @media (max-width: 768px) {
+        #why-dealers .cs-card-group {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 480px) {
+        #why-dealers .cs-card-group {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    #why-dealers .cs-goal {
+        max-width: 42rem;
+        font-style: italic;
+        text-align: center;
+        margin: 0;
+    }
+</style>
+
+
+<!-- ============================================ -->
 <!--         Carousel CSS & JS (scoped)           -->
 <!-- ============================================ -->
 <style>
-    /* --- Carousel wrapper: matches original .cs-picture sizing/shape --- */
     #sbsr-1279 .cs-carousel {
         position: relative;
         overflow: hidden;
-        /* keep the same block-level behaviour as the original <picture> */
         display: block;
-        border-radius: inherit; /* picks up whatever the theme sets on .cs-picture */
+        border-radius: inherit;
     }
 
     #sbsr-1279 .cs-carousel-track {
@@ -379,7 +516,6 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
         object-fit: cover;
     }
 
-    /* Prev / Next buttons */
     #sbsr-1279 .cs-carousel-btn {
         position: absolute;
         top: 50%;
@@ -407,7 +543,6 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
     #sbsr-1279 .cs-carousel-prev { left: 0.75rem; }
     #sbsr-1279 .cs-carousel-next { right: 0.75rem; }
 
-    /* Dot indicators */
     #sbsr-1279 .cs-carousel-dots {
         position: absolute;
         bottom: 0.6rem;
