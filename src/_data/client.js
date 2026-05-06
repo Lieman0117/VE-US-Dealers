@@ -1,6 +1,6 @@
 module.exports = {
     name: "Vehicle Electronics U.S.",
-    email: "veusllc@gmail.com",
+    email: "support@vehicleelectronics.us",
     phoneForTel: "360-748-4081",
     phoneFormatted: "(306) 748-4081",
     address: {

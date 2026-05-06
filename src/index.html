@@ -215,10 +215,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
 
         <div class="cs-content">
             <div class="cs-flex">
-                <h2 class="cs-title">Vehicle Electronics Us</h2>
+                <h2 class="cs-title" style="white-space: nowrap;">Vehicle Electronics US</h2>
             </div>
             <p class="cs-text">
-                Vehicle Electronics (VE/US) supplies Dealers with Value Engineered lithium products designed to upgrade their customers' existing machines at prices competitive with current Lead Acid replacements. We do not sell directly to customers. Instead, we support qualified local Service Dealers — the Tech Experts who handle installation, service, and customer care. VE/US provides efficient, direct manufacturer delivery and simple Special Order supply so Dealers can offer modern lithium solutions without unnecessary costs or middlemen.
+                Vehicle Electronics US (Ve/US) supplies dealers with Value Engineered lithium products designed to upgrade their customers' existing machines at prices competitive with current Lead Acid replacements. We do not sell directly to customers. Instead, we support qualified local Service Dealers — the Tech Experts who handle installation, service, and customer care. VE/US provides efficient, direct manufacturer delivery and simple Special Order supply so Dealers can offer modern lithium solutions without unnecessary costs or middlemen.
             </p>
             <br>
             <a href="/Dealer-Access-Request/" class="cs-button-solid">Apply for Dealer</a>
@@ -303,6 +303,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                             View More
                             <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/black%20upper%20right%20arrow.svg" alt="icon" width="20" height="20" loading="lazy" decoding="async" aria-hidden="true">
                         </span>
+                        <picture class="cs-card-img">
+                            <source media="(min-width: 601px)" srcset="{% getUrl '/assets/images/48v100ah.png' | resize({ width: 600 }) | webp %}" type="image/webp">
+                            <img src="{% getUrl '/assets/images/48v100ah.png' | resize({ width: 400 }) | webp %}" alt="48V Golf Cart Battery" loading="lazy" decoding="async" width="400" height="400">
+                        </picture>
                     </a>
                 </li>
 
@@ -317,6 +321,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                             View More
                             <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/black%20upper%20right%20arrow.svg" alt="icon" width="20" height="20" loading="lazy" decoding="async" aria-hidden="true">
                         </span>
+                        <picture class="cs-card-img">
+                            <source media="(min-width: 601px)" srcset="{% getUrl '/assets/images/36v100ah.png' | resize({ width: 600 }) | webp %}" type="image/webp">
+                            <img src="{% getUrl '/assets/images/36v100ah.png' | resize({ width: 400 }) | webp %}" alt="36V Golf Cart Battery" loading="lazy" decoding="async" width="400" height="400">
+                        </picture>
                     </a>
                 </li>
 
@@ -331,6 +339,10 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
                             View More
                             <img class="cs-icon" src="https://csimg.nyc3.cdn.digitaloceanspaces.com/Images/Icons/black%20upper%20right%20arrow.svg" alt="icon" width="20" height="20" loading="lazy" decoding="async" aria-hidden="true">
                         </span>
+                        <picture class="cs-card-img">
+                            <source media="(min-width: 601px)" srcset="{% getUrl '/assets/images/12v320ahFront.png' | resize({ width: 600 }) | webp %}" type="image/webp">
+                            <img src="{% getUrl '/assets/images/12v320ahFront.png' | resize({ width: 400 }) | webp %}" alt="12V RV & Marine Battery" loading="lazy" decoding="async" width="400" height="400">
+                        </picture>
                     </a>
                 </li>
             </ul>
@@ -478,6 +490,46 @@ tags: "sitemap" # content/content.json will make sure that all pages in content/
         font-style: italic;
         text-align: center;
         margin: 0;
+    }
+
+    /* Product card images */
+    #services-2333 .cs-card-img {
+        display: block;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    #services-2333 .cs-card-img img {
+        width: 100%;
+        height: auto;
+        object-fit: contain;
+        border-radius: 0.375rem;
+    }
+
+    /* Dark mode fix for Why Dealers section */
+    body.dark-mode #why-dealers {
+        background-color: var(--dark) !important;
+    }
+
+    body.dark-mode #why-dealers .cs-title {
+        color: var(--bodyTextColorWhite) !important;
+    }
+
+    body.dark-mode #why-dealers .cs-item {
+        background: var(--medium) !important;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    }
+
+    body.dark-mode #why-dealers .cs-h3 {
+        color: var(--bodyTextColorWhite) !important;
+    }
+
+    body.dark-mode #why-dealers .cs-item-p {
+        color: var(--bodyTextColorWhite) !important;
+    }
+
+    body.dark-mode #why-dealers .cs-goal {
+        color: var(--bodyTextColorWhite) !important;
     }
 </style>
 
