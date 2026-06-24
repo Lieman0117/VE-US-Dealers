@@ -398,11 +398,11 @@ permalink: "/order/"
                 </div>
             </div>
 
-            <!-- Product 3: 12V -->
+            <!-- Product 3: 12V — COMMENTED OUT, bring back later
             <div class="cs-product-section">
                 <label class="cs-label cs-product-label">
                     <div class="cs-product-header">
-                        <strong>VE/US Brand 12V 314Ah RV &amp; Boat (Compact 320) Smart LFP Lithium</strong>
+                        <strong>VE/US Brand Compact 12V 320Ah RV &amp; Boat Smart LFP Lithium</strong>
                         <span class="cs-product-includes">Battery Only — No Charger Included</span>
                         <span class="cs-warranty">Dealer Price with 5 Year Warranty</span>
                         <span class="cs-product-price">$600 each</span>
@@ -416,6 +416,7 @@ permalink: "/order/"
                     Sub Total: <span id="subtotal-12v">$0</span>
                 </div>
             </div>
+            END Product 3: 12V -->
 
             <!-- Total -->
             <div class="cs-order-total">
@@ -429,7 +430,7 @@ permalink: "/order/"
             <input type="hidden" name="total-amount" id="total-amount">
             <input type="hidden" name="product-48v-subtotal" id="hidden-subtotal-48v">
             <input type="hidden" name="product-36v-subtotal" id="hidden-subtotal-36v">
-            <input type="hidden" name="product-12v-subtotal" id="hidden-subtotal-12v">
+            <!-- <input type="hidden" name="product-12v-subtotal" id="hidden-subtotal-12v"> -->
 
             <!-- Delivery Section -->
             <div class="cs-delivery-section">
@@ -845,14 +846,14 @@ function buildOrderItemsHTML() {
     const lines = [];
     const q48 = parseInt(document.getElementById('qty-48v').value) || 0;
     const q36 = parseInt(document.getElementById('qty-36v').value) || 0;
-    const q12 = parseInt(document.getElementById('qty-12v').value) || 0;
+    // const q12 = parseInt(document.getElementById('qty-12v').value) || 0; // 12V commented out
     if (q48 > 0) lines.push('<p><strong>' + q48 + 'x</strong> 48V 100Ah Golf Cart Battery @ $900 = <strong>$' + (q48*900) + '</strong></p>');
     if (q36 > 0) lines.push('<p><strong>' + q36 + 'x</strong> 36V 100Ah Golf Cart Battery @ $800 = <strong>$' + (q36*800) + '</strong></p>');
-    if (q12 > 0) lines.push('<p><strong>' + q12 + 'x</strong> 12V 314Ah RV/Boat Battery @ $600 = <strong>$' + (q12*600) + '</strong></p>');
+    // if (q12 > 0) lines.push('<p><strong>' + q12 + 'x</strong> Compact 12V 320Ah RV/Boat Battery @ $600 = <strong>$' + (q12*600) + '</strong></p>'); // 12V commented out
     if (stripePromoCode) {
         const sub = (parseInt(document.getElementById('qty-48v').value)||0)*900 +
-                    (parseInt(document.getElementById('qty-36v').value)||0)*800 +
-                    (parseInt(document.getElementById('qty-12v').value)||0)*600;
+                    (parseInt(document.getElementById('qty-36v').value)||0)*800;
+                    // + (parseInt(document.getElementById('qty-12v').value)||0)*600; // 12V commented out
         lines.push('<p style="color:#1a7a3c;"><strong>Promo (' + stripePromoCode + '):</strong> -$' + Math.round(sub * stripePromoDiscount) + '</p>');
     }
     return lines.join('');
